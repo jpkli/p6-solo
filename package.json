@@ -1,0 +1,32 @@
+{
+  "name": "p6-solo",
+  "version": "0.2.0",
+  "description": "Single thread cpu implementation for P6's interface.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "browserify index.js -o dist/p6-solo.js; uglifyjs dist/p6-solo.js > dist/p6-solo.min.js",
+    "watch": "watchify index.js -o dist/p6-solo.js",
+    "test": "mocha",
+    "prepublishOnly": "npm build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "."
+  },
+  "keywords": [
+    "data-management",
+    "parallel-processing",
+    "hpc"
+  ],
+  "author": "Kelvin Li",
+  "license": "BSD-3-Clause",
+  "devDependencies": {
+    "browserify": "^16.1.0",
+    "minami": "^1.2.3",
+    "mocha": "^5.0.1",
+    "uglifyify": "^4.0.5"
+  }
+}
