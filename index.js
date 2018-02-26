@@ -5,12 +5,12 @@ var root = typeof self == 'object' && self.self === self && self ||
 var p6Solo = {
     allocate    : require('./src/allocate'),
     arrays      : require('./src/array'),
-    pipeline    : require('./src/pipeline'),
     aggregate   : require('./src/aggregate'),
+    pipeline    : require('./src/pipeline'),
     derive      : require('./src/derive'),
     match       : require('./src/match'),
-    stats       : require('./src/stats'),
     join        : require('./src/join'),
+    stats       : require('./src/stats'),
     embed       : require('./src/embed'),
     toArray     : require('./src/toarray')
 };

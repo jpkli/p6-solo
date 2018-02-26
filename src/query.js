@@ -8,17 +8,14 @@ query.group = aggregate;
 
 query.indexBy = function(data, id){
     var indexed = {};
-
     data.forEach(function(d){
-
         if(!indexed.hasOwnProperty(d[id])){
             indexed[d[id]] = [ d ];
         } else {
             indexed[d[id]].push(d);
         }
-        // delete d[id];
+        delete d[id];
     });
-
     return indexed;
 };
 

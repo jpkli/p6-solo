@@ -4,14 +4,13 @@ module.exports = function(data, spec, headers){
     var i,
         l = data.length,
         attributes = headers || Object.keys(data[0]),
-        keys = Object.keys(spec),
         bin,
         bins = [],
         binCollection = {},
         result = [],
         ks;
 
-    if(keys.indexOf("$group") < 0 && keys.indexOf("$bin") < 0) return result;
+    if(!spec.hasOwnProperty('$group') && !spec.hasOwnProperty('$bin')) return result;
 
     if(typeof spec.$bin == 'object') {
         var binAttr = Object.keys(spec.$bin)[0],
@@ -78,19 +77,19 @@ module.exports = function(data, spec, headers){
             })
         }
 
-        keys = keys.filter(function(k){ return ["$bin", "$group"].indexOf(k) === -1; });
-
+        var out = spec.$collect || spec.$reduce || [];
+        var keys = Object.keys(out);
+        if(keys.length === 0) return result;
         keys.forEach(function(key){
             var attr = key,
-                opt = spec[key];
+                opt = out[key];
 
             if(opt === "$count" || opt === "$data") {
                 attr = key;
             }
-            if(typeof spec[key] === 'object'){
-                opt = Object.keys(spec[key])[0];
-                attr = spec[key][opt];
-
+            if(typeof out[key] === 'object'){
+                opt = Object.keys(out[key])[0];
+                attr = out[key][opt];
 
                 if(attributes.indexOf(attr) === -1 && attr !== "*" && !Array.isArray(attr)) {
                     var warnMsg = "No matching attribute or operation defined for the new attribute " + key + ":" + spec[key];
@@ -128,6 +127,7 @@ module.exports = function(data, spec, headers){
                         });
                 } else {
                     var fname = opt.slice(1);
+
                     if(fname in ArrayOpts) {
                         res[key] = ArrayOpts[fname].call(null, binCollection[bins[i]].map(function(a){
                             return a[attr];

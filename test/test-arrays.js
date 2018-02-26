@@ -3,14 +3,17 @@ var assert = require('assert'),
 
 var data1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 0];
 var data2 = [1, 2, 3, 1, 2, 3, 7, 8, 9, 10, 10];
-// var data3 = [2, 4, 6, 5, 7, 9, 14, 16, 18, 20, 10];
-
 
 describe('array', function() {
+    describe('Test data: ', function() {
+        it('data1: '+data1.join(','), function() {
+            assert.equal(data1.length, 11);
+        });
+        it('data2: '+data2.join(','), function() {
+            assert.equal(data2.length, 11);
+        });
+    });
 
-    console.log('  data1:', data1);
-    console.log('  data2:', data2);
-    // console.log('  data3:', data3);
 
     describe('#sum(data1)', function() {
         it('should add up to 55', function() {

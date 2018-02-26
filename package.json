@@ -25,6 +25,7 @@
   "license": "BSD-3-Clause",
   "devDependencies": {
     "browserify": "^16.1.0",
+    "lodash": "^4.17.5",
     "minami": "^1.2.3",
     "mocha": "^5.0.1",
     "uglifyify": "^4.0.5"
