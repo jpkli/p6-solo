@@ -70,6 +70,10 @@ module.exports = function allocate(options) {
         }
     }
 
+    ds.insertRows = function(rows) {
+        array = array.concat(rows);
+    }
+    
     /**
     * @method objectArray
     * @return {Object[]} - Return data as array of objects

@@ -9,7 +9,7 @@
   "scripts": {
     "build": "browserify index.js -o dist/p6-solo.js; uglifyjs dist/p6-solo.js > dist/p6-solo.min.js",
     "watch": "watchify index.js -o dist/p6-solo.js",
-    "test": "mocha",
+    "test": "mocha ./test/*.js",
     "prepublishOnly": "npm build"
   },
   "repository": {
@@ -25,9 +25,10 @@
   "license": "BSD-3-Clause",
   "devDependencies": {
     "browserify": "^16.1.0",
+    "jStat": "^1.7.1",
     "lodash": "^4.17.5",
     "minami": "^1.2.3",
-    "mocha": "^5.0.1",
+    "mocha": "^5.0.5",
     "uglifyify": "^4.0.5"
   }
 }

@@ -1,18 +1,18 @@
 module.exports = function(data, keys) {
-    let bins = {},
+    var bins = {},
         keys = Array.isArray(keys) ? keys : [keys];
 
     data.forEach((d)=>{
-        let hash = keys.map((k)=>d[k]).join('');
+        var hash = keys.map((k)=>d[k]).join('');
         bins[hash] = 0;
     })
     bins = Object.keys(bins);
 
-    let results = new Array(bins.length).fill({items:[]});
+    var results = new Array(bins.length).fill({items:[]});
 
     data.map(function(d){
-        let hash = keys.map((k)=>d[k]).join('');
-        let ri = bins.indexOf(hash);
+        var hash = keys.map((k)=>d[k]).join('');
+        var ri = bins.indexOf(hash);
 
         keys.forEach((k)=>{
             results[ri][k] = d[k];

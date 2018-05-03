@@ -1,5 +1,5 @@
 var assert = require('assert'),
-    arrays = require('../src/array');
+    arrays = require('../src/arrays');
 
 var data1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 0];
 var data2 = [1, 2, 3, 1, 2, 3, 7, 8, 9, 10, 10];

@@ -1,4 +1,4 @@
-(function(){function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s}return e})()({1:[function(require,module,exports){
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 (function (global){
 var root = typeof self == 'object' && self.self === self && self ||
            typeof global == 'object' && global.global === global && global ||
@@ -6,13 +6,13 @@ var root = typeof self == 'object' && self.self === self && self ||
 
 var p6Solo = {
     allocate    : require('./src/allocate'),
-    arrays      : require('./src/array'),
-    pipeline    : require('./src/pipeline'),
+    arrays      : require('./src/arrays'),
     aggregate   : require('./src/aggregate'),
+    pipeline    : require('./src/pipeline'),
     derive      : require('./src/derive'),
     match       : require('./src/match'),
-    stats       : require('./src/stats'),
     join        : require('./src/join'),
+    stats       : require('./src/stats'),
     embed       : require('./src/embed'),
     toArray     : require('./src/toarray')
 };
@@ -27,21 +27,20 @@ if(typeof module != 'undefined' && module.exports)
     module.exports = root.p6Solo;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./src/aggregate":2,"./src/allocate":3,"./src/array":4,"./src/derive":5,"./src/embed":6,"./src/join":7,"./src/match":8,"./src/pipeline":9,"./src/stats":11,"./src/toarray":12}],2:[function(require,module,exports){
-var ArrayOpts = require("./array.js");
+},{"./src/aggregate":2,"./src/allocate":3,"./src/arrays":4,"./src/derive":5,"./src/embed":6,"./src/join":7,"./src/match":8,"./src/pipeline":9,"./src/stats":11,"./src/toarray":12}],2:[function(require,module,exports){
+var ArrayOpts = require("./arrays.js");
 
 module.exports = function(data, spec, headers){
     var i,
         l = data.length,
         attributes = headers || Object.keys(data[0]),
-        keys = Object.keys(spec),
         bin,
         bins = [],
         binCollection = {},
         result = [],
         ks;
 
-    if(keys.indexOf("$group") < 0 && keys.indexOf("$bin") < 0) return result;
+    if(!spec.hasOwnProperty('$group') && !spec.hasOwnProperty('$bin')) return result;
 
     if(typeof spec.$bin == 'object') {
         var binAttr = Object.keys(spec.$bin)[0],
@@ -108,19 +107,19 @@ module.exports = function(data, spec, headers){
             })
         }
 
-        keys = keys.filter(function(k){ return ["$bin", "$group"].indexOf(k) === -1; });
-
+        var out = spec.$collect || spec.$reduce || [];
+        var keys = Object.keys(out);
+        if(keys.length === 0) return result;
         keys.forEach(function(key){
             var attr = key,
-                opt = spec[key];
+                opt = out[key];
 
             if(opt === "$count" || opt === "$data") {
                 attr = key;
             }
-            if(typeof spec[key] === 'object'){
-                opt = Object.keys(spec[key])[0];
-                attr = spec[key][opt];
-
+            if(typeof out[key] === 'object'){
+                opt = Object.keys(out[key])[0];
+                attr = out[key][opt];
 
                 if(attributes.indexOf(attr) === -1 && attr !== "*" && !Array.isArray(attr)) {
                     var warnMsg = "No matching attribute or operation defined for the new attribute " + key + ":" + spec[key];
@@ -158,6 +157,7 @@ module.exports = function(data, spec, headers){
                         });
                 } else {
                     var fname = opt.slice(1);
+
                     if(fname in ArrayOpts) {
                         res[key] = ArrayOpts[fname].call(null, binCollection[bins[i]].map(function(a){
                             return a[attr];
@@ -172,10 +172,10 @@ module.exports = function(data, spec, headers){
     return result;
 };
 
-},{"./array.js":4}],3:[function(require,module,exports){
+},{"./arrays.js":4}],3:[function(require,module,exports){
 /**
  * alloc(options) - allocating memory for storing data values in different schemaures.
- * @exports alloc
+ * @exports allocate
  * @param {Object} options - Options for allocating memory.
  * @param {Array} options.array - Array containing the data values.
  * @param {Array} options.fields - Fields in the data.
@@ -245,6 +245,10 @@ module.exports = function allocate(options) {
         }
     }
 
+    ds.insertRows = function(rows) {
+        array = array.concat(rows);
+    }
+    
     /**
     * @method objectArray
     * @return {Object[]} - Return data as array of objects
@@ -511,7 +515,7 @@ array.std = function(rowArray) {
 module.exports = array;
 
 },{}],5:[function(require,module,exports){
-var $ = require('./array.js');
+var $ = require('./arrays.js');
 
 module.exports = function(data, spec){
     if(!Array.isArray(data))
@@ -541,7 +545,7 @@ module.exports = function(data, spec){
     return data;
 }
 
-},{"./array.js":4}],6:[function(require,module,exports){
+},{"./arrays.js":4}],6:[function(require,module,exports){
 module.exports = function embed(spec) {
     var id = spec.$id || spec.$by,
         attributes = Object.keys(spec);
@@ -571,21 +575,18 @@ module.exports = function embed(spec) {
 }
 
 },{}],7:[function(require,module,exports){
-
 module.exports = function join(dataLeft, dataRight) {
-    'use strict';
     var len = dataLeft.length,
         keyL = Object.keys(dataLeft[0]),
         keyR = Object.keys(dataRight[0]);
-
-
+        
     var keys = keyR.filter(function(kr){ return (keyL.indexOf(kr) === -1);});
 
-    for(var i = 0; i < len; i++) {
-        keys.forEach(function(k){
-            dataLeft[i][k] = dataRight[i][k];
-        });
-    }
+    keys.forEach(function(k){
+        for(var i = 0; i < len; i++) {
+            dataLeft[i][k] = dataRight[i][k];    
+        }
+    });
 
     return dataLeft;
 }
@@ -768,7 +769,7 @@ module.exports = function pipeline (data){
 }
 
 },{"./aggregate":2,"./derive":5,"./match":8,"./query":10}],10:[function(require,module,exports){
-const arrayOpts = require("./array.js");
+const arrayOpts = require("./arrays.js");
 const aggregate = require("./aggregate.js");
 const match = require("./match.js");
 
@@ -778,17 +779,14 @@ query.group = aggregate;
 
 query.indexBy = function(data, id){
     var indexed = {};
-
     data.forEach(function(d){
-
         if(!indexed.hasOwnProperty(d[id])){
             indexed[d[id]] = [ d ];
         } else {
             indexed[d[id]].push(d);
         }
-        // delete d[id];
+        delete d[id];
     });
-
     return indexed;
 };
 
@@ -998,8 +996,8 @@ query.toColumnArray = function(data) {
 
 module.exports = query;
 
-},{"./aggregate.js":2,"./array.js":4,"./match.js":8}],11:[function(require,module,exports){
-var array = require("./array");
+},{"./aggregate.js":2,"./arrays.js":4,"./match.js":8}],11:[function(require,module,exports){
+var array = require("./arrays");
 
 function stats(data, fields){
 
@@ -1038,7 +1036,7 @@ stats.domains = function(data, fields) {
 
 module.exports = stats;
 
-},{"./array":4}],12:[function(require,module,exports){
+},{"./arrays":4}],12:[function(require,module,exports){
 module.exports = function toArray(data, arg){
     var options = arg || {},
         fields = options.fields || Object.keys(data[0]) || [],

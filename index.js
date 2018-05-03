@@ -4,7 +4,7 @@ var root = typeof self == 'object' && self.self === self && self ||
 
 var p6Solo = {
     allocate    : require('./src/allocate'),
-    arrays      : require('./src/array'),
+    arrays      : require('./src/arrays'),
     aggregate   : require('./src/aggregate'),
     pipeline    : require('./src/pipeline'),
     derive      : require('./src/derive'),

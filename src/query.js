@@ -1,4 +1,4 @@
-const arrayOpts = require("./array.js");
+const arrayOpts = require("./arrays.js");
 const aggregate = require("./aggregate.js");
 const match = require("./match.js");
 

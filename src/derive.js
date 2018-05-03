@@ -1,4 +1,4 @@
-var $ = require('./array.js');
+var $ = require('./arrays.js');
 
 module.exports = function(data, spec){
     if(!Array.isArray(data))

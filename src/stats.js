@@ -1,4 +1,4 @@
-var array = require("./array");
+var array = require("./arrays");
 
 function stats(data, fields){
 

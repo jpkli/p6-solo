@@ -1,4 +1,4 @@
-var ArrayOpts = require("./array.js");
+var ArrayOpts = require("./arrays.js");
 
 module.exports = function(data, spec, headers){
     var i,
