@@ -11,9 +11,9 @@
 module.exports = function allocate(options) {
     'use strict';
     var array = options.array || [],
-        header = options.fields || array[0],
+        header = options.fields || options.header || array[0],
         types = options.types || [],
-        schema = options.schema || {},
+        schema = options.schema || undefined,
         skip = options.skip || 0,
         data = options.data || [];
 

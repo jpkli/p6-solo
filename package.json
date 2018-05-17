@@ -1,6 +1,6 @@
 {
   "name": "p6-solo",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Single thread cpu implementation for P6's interface.",
   "main": "index.js",
   "directories": {
