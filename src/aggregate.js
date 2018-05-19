@@ -117,8 +117,8 @@ module.exports = function(data, spec, headers){
                 } else if (opt === "$count") {
                     res[key] = binCollection[bins[i]].length;
                 } else if (opt === "$data") {
-
-                    res[key] = (spec[key][opt] == '*')
+                    var collect = (spec.$collect) ? '$collect' : '$reduce';
+                    res[key] = (spec[collect][key][opt] == '*')
                         ? binCollection[bins[i]]
                         : binCollection[bins[i]].map(function(data){
                             var row = {};
