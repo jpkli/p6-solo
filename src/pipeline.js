@@ -112,5 +112,13 @@ module.exports = function pipeline (data){
         return queue;
     }
 
+    pipeline.runSpec = function(specs) {
+        specs.forEach(function(spec){
+            let opt = Object.keys(spec)[0];
+            pipeline[opt.replace('$', '')](spec[opt])
+        })
+        return pipeline.execute();
+    }
+
     return pipeline;
 }

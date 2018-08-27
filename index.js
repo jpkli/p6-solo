@@ -2,7 +2,7 @@ var root = typeof self == 'object' && self.self === self && self ||
            typeof global == 'object' && global.global === global && global ||
            this;
 
-var p6Solo = {
+var p3 = {
     allocate    : require('./src/allocate'),
     arrays      : require('./src/arrays'),
     aggregate   : require('./src/aggregate'),
@@ -15,11 +15,10 @@ var p6Solo = {
     toArray     : require('./src/toarray')
 };
 
-if(typeof root.p6 == 'object') {
-    root.p6.solo = p6Solo;
+if(typeof root.p3 == 'object') {
+    root.p3 = Object.assign(root.p3, p3);
 } else {
-    root.p6Solo = p6Solo;
+    root.p3 = p3;
 }
 
-if(typeof module != 'undefined' && module.exports)
-    module.exports = root.p6Solo;
+module.exports = p3;
