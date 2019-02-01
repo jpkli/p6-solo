@@ -12,7 +12,8 @@ var p3 = {
     join        : require('./src/join'),
     stats       : require('./src/stats'),
     embed       : require('./src/embed'),
-    toArray     : require('./src/toarray')
+    toArray     : require('./src/toarray'),
+    vector     : require('./src/vector')
 };
 
 if(typeof root.p3 == 'object') {

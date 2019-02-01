@@ -18,7 +18,7 @@ function vectorSum(vectors){
         numberOfVectors = vectors.length;
 
     for(var i = 1; i < numberOfVectors; i++){
-        result = array.vectorAdd(result, vectors[i]);
+        result = vectorAdd(result, vectors[i]);
     }
 
     return result;
