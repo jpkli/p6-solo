@@ -1,1 +1,1 @@
-## P6-Solo Single thread cpu implementation for P6's interface.
+## P3: Portable Processing piplelines based on single thread JavaScript.
