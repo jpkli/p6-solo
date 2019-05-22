@@ -79,7 +79,7 @@ module.exports = function(data, spec, headers){
 
         var out = spec.$collect || spec.$reduce || [];
         var keys = Object.keys(out);
-        if(keys.length === 0) return result;
+        if(keys.length === 0 && !spec.$data) return result;
         keys.forEach(function(key){
             var attr = key,
                 opt = out[key];
