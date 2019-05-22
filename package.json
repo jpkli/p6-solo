@@ -1,7 +1,7 @@
 {
-  "name": "p.3",
-  "version": "0.3.2",
-  "description": "Portable processing pipelines based on single-thread JavaScript.",
+  "name": "p3",
+  "version": "0.3.3",
+  "description": "Portable processing pipelines for data analytics based on single-thread JavaScript.",
   "main": "index.js",
   "directories": {
     "test": "test"
