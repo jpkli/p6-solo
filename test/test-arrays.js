@@ -14,7 +14,6 @@ describe('array', function() {
         });
     });
 
-
     describe('#sum(data1)', function() {
         it('should add up to 55', function() {
             assert.equal(arrays.sum(data1), 55);

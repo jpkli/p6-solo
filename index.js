@@ -13,7 +13,7 @@ var p3 = {
     stats       : require('./src/stats'),
     embed       : require('./src/embed'),
     toArray     : require('./src/toarray'),
-    vector     : require('./src/vector')
+    vector      : require('./src/vector')
 };
 
 if(typeof root.p3 == 'object') {

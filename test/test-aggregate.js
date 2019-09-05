@@ -12,18 +12,7 @@ var dataProps = [
 ];
 
 let data = randomData({props: dataProps, size: 10000});
-// let data = [
-//     {Gender: "M", Weight: 8,   MotherWeight: 120, MotherRace: 'White'},
-//     {Gender: "F", Weight: 7.6, MotherWeight: 120, MotherRace: 'Aisan'},
-//     {Gender: "M", Weight: 9,   MotherWeight: 130, MotherRace: 'Black'},
-//     {Gender: "F", Weight: 8.2, MotherWeight: 192, MotherRace: 'White'},
-//     {Gender: "F", Weight: 9.2, MotherWeight: 155, MotherRace: 'Black'},
-//     {Gender: "M", Weight: 8.8, MotherWeight: 178, MotherRace: 'Asian'},
-//     {Gender: "M", Weight: 9.6, MotherWeight: 126, MotherRace: 'White'},
-//     {Gender: "F", Weight: 9.6, MotherWeight: 146, MotherRace: 'White'}
-// ];
-
-let p6OptsToLodashOpts = {
+let p3OptsToLodashOpts = {
     // $count: 'countBy',
     $sum  : 'sumBy',
     $avg  : 'meanBy',
@@ -31,7 +20,7 @@ let p6OptsToLodashOpts = {
     $min  : 'minBy'
 }
 
-let runP6Solo = function(groupKey, opt) {
+let runP3 = function(groupKey, opt) {
     let query = {
         $group: '_groupKey_',
         $collect: {
@@ -70,13 +59,13 @@ describe('aggregate', function() {
 
     describe('{$group: "Gender"}', function() {
         it('should return grouped result based on Gender', function() {
-            var p6Opts = Object.keys(p6OptsToLodashOpts),
+            var p6Opts = Object.keys(p3OptsToLodashOpts),
                 optsTotal = p6Opts.length;
 
             for(var i = 0; i < optsTotal; i++ ) {
                 assert.deepEqual(
-                    runP6Solo('Gender', p6Opts[i]),
-                    runLodash('Gender', p6OptsToLodashOpts[p6Opts[i]])
+                    runP3('Gender', p6Opts[i]),
+                    runLodash('Gender', p3OptsToLodashOpts[p6Opts[i]])
                 );
             }
         });
@@ -84,13 +73,13 @@ describe('aggregate', function() {
 
     describe('{$group: "MotherRace"}', function() {
         it('should return grouped result based on MotherRace', function() {
-            var p6Opts = Object.keys(p6OptsToLodashOpts),
+            var p6Opts = Object.keys(p3OptsToLodashOpts),
                 optsTotal = p6Opts.length;
 
             for(var i = 0; i < optsTotal; i++ ) {
                 assert.deepEqual(
-                    runP6Solo('MotherRace', p6Opts[i]),
-                    runLodash('MotherRace', p6OptsToLodashOpts[p6Opts[i]])
+                    runP3('MotherRace', p6Opts[i]),
+                    runLodash('MotherRace', p3OptsToLodashOpts[p6Opts[i]])
                 );
             }
         });

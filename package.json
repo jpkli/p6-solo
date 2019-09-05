@@ -1,7 +1,7 @@
 {
-  "name": "p3",
+  "name": "p3.js",
   "version": "0.3.3",
-  "description": "Portable processing pipelines for data analytics based on single-thread JavaScript.",
+  "description": "Portable processing pipelines for data transformation and visualization based on single-thread JavaScript.",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -15,9 +15,9 @@
     "url": "git+https://github.com/jpkli/p3.git"
   },
   "keywords": [
-    "data-management",
-    "parallel-processing",
-    "hpc"
+    "data management",
+    "data processing",
+    "data transformation"
   ],
   "author": "Kelvin Li",
   "license": "BSD-3-Clause",
