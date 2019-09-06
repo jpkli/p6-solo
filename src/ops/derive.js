@@ -1,6 +1,4 @@
-var $ = require('./arrays.js');
-
-module.exports = function(data, spec){
+export default function(data, spec){
     if(!Array.isArray(data))
         throw new Error("Inproper input data format.");
 

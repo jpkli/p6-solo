@@ -1,6 +1,6 @@
-var normalDist = require('jStat').normal.sample;
+import {normal} from 'jStat';
 
-module.exports = function randomData(arg) {
+export default function randomData(arg) {
     var options = arg || {},
         random = {},
         parser = {},
@@ -12,7 +12,7 @@ module.exports = function randomData(arg) {
     function boundedRandom(p) {
         var value = p.min - 1;
         while ( value < p.min || value > p.max) {
-            value = normalDist(p.mean, p.std);
+            value = normal.sample(p.mean, p.std);
         }
         return value;
     }

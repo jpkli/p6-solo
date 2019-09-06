@@ -1,4 +1,4 @@
-module.exports = function match(data, spec) {
+export default function match(data, spec) {
     var indexes = data[0];
 
     if(!Array.isArray(indexes)) indexes = [];

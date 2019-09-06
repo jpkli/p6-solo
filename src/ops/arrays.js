@@ -186,6 +186,4 @@ array.std = function(rowArray) {
     return Math.sqrt(array.var(rowArray));
 }
 
-
-
-module.exports = array;
+export default array;

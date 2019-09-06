@@ -1,4 +1,4 @@
-module.exports = function(data, keys) {
+export default function(data, keys) {
     var bins = {},
         keys = Array.isArray(keys) ? keys : [keys];
 

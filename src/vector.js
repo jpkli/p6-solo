@@ -1,9 +1,3 @@
-module.exports = {
-    add: vectorAdd,
-    sum: vectorSum,
-    avg: vectorAvg
-}
-
 function vectorAdd(a, b){
     var c = [];
     a.forEach(function(v, i){
@@ -42,4 +36,10 @@ function vectorAvg(vectors){
     }
 
     return result;
+}
+
+export default {
+    add: vectorAdd,
+    sum: vectorSum,
+    avg: vectorAvg
 }

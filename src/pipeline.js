@@ -1,9 +1,9 @@
-const derive = require('./derive');
-const queries = require('./query');
-const aggregate = require('./aggregate');
-const match = require('./match');
+import derive from './ops/derive';
+import queries from './ops/query';
+import aggregate from './ops/aggregate';
+import match from './ops/match';
 
-module.exports = function pipeline (data){
+export default function pipeline (data){
     var queue = [],
         cache = {},
         opt = {},

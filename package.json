@@ -8,25 +8,43 @@
   },
   "scripts": {
     "build": "node build/build.js",
-    "test": "mocha ./test/*.js"
+    "start": "npm run dev",
+    "dev": "webpack-dev-server --inline --progress --config build/webpack.config.js",
+    "test": "mocha-webpack --growl --colors --webpack-config build/webpack.test.config.js 'test/ops/test-*.js'"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jpkli/p3.git"
   },
   "keywords": [
-    "data management",
     "data processing",
-    "data transformation"
+    "data transformation",
+    "visualization"
   ],
   "author": "Kelvin Li",
   "license": "BSD-3-Clause",
   "devDependencies": {
+    "chalk": "^2.4.1",
     "lodash": "^4.17.5",
     "mocha": "^5.0.5",
+    "mocha-webpack": "^2.0.0-beta.0",
     "uglifyjs-webpack-plugin": "^1.3.0",
-    "webpack": "^4.16.5",
-    "webpack-cli": "^3.1.0"
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.7",
+    "webpack-bundle-analyzer": "^3.4.1",
+    "webpack-dev-server": "^3.8.0",
+    "webpack-merge": "^4.1.0",
+    "webpack-node-externals": "^1.7.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "d3-axis": "^1.0.12",
+    "d3-geo": "^1.11.3",
+    "d3-request": "^1.0.6",
+    "d3-scale": "^2.1.2",
+    "d3-scale-chromatic": "^1.3.3",
+    "d3-selection": "^1.3.2",
+    "d3-shape": "^1.2.2",
+    "topojson-client": "^3.0.0",
+    "world-atlas": "^1.1.4"
+  }
 }

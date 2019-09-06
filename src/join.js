@@ -1,4 +1,4 @@
-module.exports = function join(dataLeft, dataRight) {
+export default function join(dataLeft, dataRight) {
     var len = dataLeft.length,
         keyL = Object.keys(dataLeft[0]),
         keyR = Object.keys(dataRight[0]);

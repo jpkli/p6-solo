@@ -8,7 +8,7 @@
  * @param {object[]} [options.data] - default data
  *
  */
-module.exports = function allocate(options) {
+export default function allocate(options) {
     'use strict';
     var array = options.array || [],
         header = options.fields || options.header || array[0],

@@ -1,6 +1,6 @@
-const arrayOpts = require("./arrays.js");
-const aggregate = require("./aggregate.js");
-const match = require("./match.js");
+import arrayOpts from './arrays.js';
+import aggregate from './aggregate.js';
+import match from './match.js';
 
 var query = {};
 query.match = match;
@@ -223,4 +223,4 @@ query.toColumnArray = function(data) {
     return columnArray;
 }
 
-module.exports = query;
+export default query;

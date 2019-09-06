@@ -1,6 +1,6 @@
-var ArrayOpts = require("./arrays.js");
+import ArrayOpts from './arrays';
 
-module.exports = function(data, spec, headers){
+export default function(data, spec, headers){
     var i,
         l = data.length,
         attributes = headers || Object.keys(data[0]),

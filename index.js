@@ -1,25 +1,41 @@
-var root = typeof self == 'object' && self.self === self && self ||
-           typeof global == 'object' && global.global === global && global ||
-           this;
+import pipeline   from './src/pipeline';
+import allocate   from './src/allocate';
+import arrays     from './src/ops/arrays';
+import aggregate  from './src/ops/aggregate';
+import derive     from './src/ops/derive';
+import match      from './src/ops/match';
+import join       from './src/join';
+import stats      from './src/stats';
+import embed      from './src/embed';
+import toArray    from './src/toarray';
+import vector     from './src/vector';
 
-var p3 = {
-    allocate    : require('./src/allocate'),
-    arrays      : require('./src/arrays'),
-    aggregate   : require('./src/aggregate'),
-    pipeline    : require('./src/pipeline'),
-    derive      : require('./src/derive'),
-    match       : require('./src/match'),
-    join        : require('./src/join'),
-    stats       : require('./src/stats'),
-    embed       : require('./src/embed'),
-    toArray     : require('./src/toarray'),
-    vector      : require('./src/vector')
+import Plot         from './src/vis/plot';
+import AreaChart    from './src/vis/area';
+import Spline       from './src/vis/spline';
+import ScatterPlot  from './src/vis/circle';
+import BarChart     from './src/vis/bar';
+import GeoMap       from './src/vis/map';
+
+export default {
+    pipeline,
+    allocate,
+    arrays,
+    aggregate,
+    derive,
+    match,
+    join,
+    stats,
+    embed,
+    toArray,
+    vector,
 };
 
-if(typeof root.p3 == 'object') {
-    root.p3 = Object.assign(root.p3, p3);
-} else {
-    root.p3 = p3;
+export const vis = {
+    Plot,
+    ScatterPlot,
+    BarChart,
+    AreaChart,
+    Spline,
+    GeoMap
 }
-
-module.exports = p3;

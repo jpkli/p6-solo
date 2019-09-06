@@ -1,4 +1,4 @@
-module.exports = function embed(spec) {
+export default function embed(spec) {
     var id = spec.$id || spec.$by,
         attributes = Object.keys(spec);
 

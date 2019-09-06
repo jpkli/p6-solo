@@ -1,4 +1,4 @@
-module.exports = function rand(d){
+export default function rand(d){
     return function(min, max) {
         var min = min || 0,
             max = max || 1;

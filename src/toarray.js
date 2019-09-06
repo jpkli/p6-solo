@@ -1,4 +1,4 @@
-module.exports = function toArray(data, arg){
+export default function toArray(data, arg){
     var options = arg || {},
         fields = options.fields || Object.keys(data[0]) || [],
         format = options.format || 'row';

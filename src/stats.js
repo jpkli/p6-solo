@@ -1,4 +1,4 @@
-var array = require("./arrays");
+import array from './ops/arrays';
 
 function stats(data, fields){
 
@@ -35,4 +35,4 @@ stats.domains = function(data, fields) {
     return result;
 }
 
-module.exports = stats;
+export default stats;
