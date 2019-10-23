@@ -94,16 +94,16 @@ export default class Plot {
                     domain = this.domains[vmap[channel]] || [0, 1];
                 }
                 let range = channels[channel];
-                if( (this.data.schema && this.data.schema[vmap[channel] === 'string'])) {
-                    scales[channel] = scaleOrdinal().domain(domain).rangeRoundBands([0, this.width], .05);
+                if( (this.data.schema && this.data.schema[vmap[channel] === 'string']) || domain.length > 2) {
+                    scales[channel] = scaleOrdinal().domain(domain).range(range);
                 } else {
                     scales[channel] = scaleLinear().domain(domain).range(range);
                 }
                 if(channel == 'color') {
-                    scales[channel].interpolate(interpolateHcl)
+                    scales[channel].interpolate(interpolateHcl);
                 }
             } else {
-                scales[channel] = () => vmap[channel]
+                scales[channel] = () => vmap[channel];
             }
         }
 

@@ -1,7 +1,6 @@
 import Plot from './plot';
 import {scaleBand} from 'd3-scale';
 export default class BarChart extends Plot {
-   
     constructor(data, view) {
         super(data, view);
         this.render();
@@ -9,8 +8,12 @@ export default class BarChart extends Plot {
 
     render() {
         let vmap = this.data.vmap;
-        
-        let domainX = new Array(this.domains[vmap.x][1] - this.domains[vmap.x][0] + 1).fill(1).map((d, i) => i + this.domains[vmap.x][0])
+        let domainX;
+        if (this.domains[vmap.x].length > 2) {
+            domainX = this.domains[vmap.x];
+        } else {
+            domainX = new Array(this.domains[vmap.x][1] - this.domains[vmap.x][0] + 1).fill(1).map((d, i) => i + this.domains[vmap.x][0]);
+        }
         this.scales.x = scaleBand().domain(domainX).range([0, this.width]).padding(0.05);
         super.axes();
         this.svg.main.selectAll(".plot-bars")
@@ -29,7 +32,7 @@ export default class BarChart extends Plot {
         let vmap = this.data.vmap;
 
         let bars = this.svg.main.selectAll(".plot-top-bars")
-            .data(newData, d => d[vmap.x])
+            .data(newData, d => d[vmap.x]);
         
         bars.exit().remove();
 

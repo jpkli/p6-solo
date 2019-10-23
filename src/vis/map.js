@@ -9,7 +9,7 @@ import countries from '../../assets/countries.json';
 export default class Map extends Plot {
     constructor(data, view) {
         super(data, view);
-        
+
         this.feature = data.feature || 'countries';
         this.circle = data.vmap.points;
         this.scale = data.vmap.scale;
@@ -97,8 +97,10 @@ export default class Map extends Plot {
     }) {
         let location = this.projection(coordinate);
         this.svg.main.append('svg:foreignObject')
-        .attr("x", location[0] - 1)
+        .attr("x", location[0] - 3)
         .attr("y", location[1] - 15)
+        .attr('width', 10)
+        .attr('height', 20)
         .attr('color', color)
         .attr('text-anchor', 'end')
         .append("xhtml:body")
