@@ -65,7 +65,7 @@ export default function allocate(options) {
             };
         } else {
             return function(value) {
-                return value;
+                return value.trim();
             };
         }
     }
@@ -81,7 +81,7 @@ export default function allocate(options) {
     ds.objectArray = function() {
         if (typeof(header) !== 'undefined' && header.length) {
             var l = header.length;
-            array.forEach(function(a) {
+            return array.map(a => {
                 var o = {},
                     offset = 0;
                 for (var i = 0; i < l; i++) {
@@ -101,10 +101,10 @@ export default function allocate(options) {
                         }
                     }
                 }
-                data.push(o);
+                return o;
             });
         }
-        return data;
+        return [];
     }
 
     /**
