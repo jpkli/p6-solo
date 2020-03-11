@@ -77,12 +77,23 @@ export default function(data, spec, headers){
             })
         }
 
-        var out = spec.$collect || spec.$reduce || [];
-        var keys = Object.keys(out);
+        var out = spec.$collect || spec.$reduce || {};
+        var keys = Object.keys(out).filter(k => ['includes', 'excludes', 'calculate'].indexOf(k) === -1);
+        var outOpt = false;
+        if (out.includes) { 
+            var includeKeys = (out.includes === '*') ? Object.keys(data[0]).filter(k => gkeys.indexOf(k) === -1 && keys.indexOf(k) === -1)
+                : out.includes;
+            outOpt = out.calculate || '$sum';
+            keys = keys.concat(includeKeys);
+        }
+        if (Array.isArray(out.excludes)) {
+           keys = keys.filter(attr => out.excludes.indexOf(attr) === -1);
+        }
+
         if(keys.length === 0 && !spec.$data) return result;
         keys.forEach(function(key){
             var attr = key,
-                opt = out[key];
+                opt = outOpt || out[key];
 
             if(opt === "$count" || opt === "$data") {
                 attr = key;
