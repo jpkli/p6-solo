@@ -4,6 +4,7 @@ import {csv} from 'd3-request';
 
 export default function() {
     csv('/assets/governments.csv', function(rows){
+
         let data = {
             json: rows,
             join: {
@@ -21,6 +22,7 @@ export default function() {
             height: 800,
             scale: 150,
             projection: 'Mercator',
+            colorMap: 'interpolateReds',
             padding: {left: 50, right: 50, top: 50, bottom: 50},
         }
     

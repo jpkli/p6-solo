@@ -1,11 +1,10 @@
 import Plot from './plot';
 import * as d3 from 'd3-geo';
 import * as topojson from 'topojson-client';
-import {interpolateBlues} from 'd3-scale-chromatic';
+import * as d3Chromatic from 'd3-scale-chromatic';
 import {scalePow} from 'd3-scale';
 import world from "../../assets/world-110m.json";
 import countries from '../../assets/countries.json';
-
 export default class Map extends Plot {
     constructor(data, view) {
         super(data, view);
@@ -14,7 +13,7 @@ export default class Map extends Plot {
         this.circle = data.vmap.points;
         this.scale = data.vmap.scale;
         this.gis = data.gis || world;
-
+        
         this.borders = view.borders || true;
         this.translate = view.translate || [this.width / 2, this.height / 1.5];
         this.scale = view.scale || ((view.projection == 'Albers') ? 1 : 150);
@@ -27,6 +26,10 @@ export default class Map extends Plot {
         this.path = d3.geoPath()
             .projection(this.projection);
 
+        this.colorMap = view.colorMap || d3Chromatic.interpolateBlues
+        if (typeof this.colorMap === 'string' && d3Chromatic.hasOwnProperty(this.colorMap)) {
+            this.colorMap = d3Chromatic[this.colorMap]
+        }
         if(data.vmap.color) {
             let valueById = {};
             data.json.forEach( d => {
@@ -44,7 +47,7 @@ export default class Map extends Plot {
             let colorScale = scalePow().exponent(this.exponent).domain(domain).range([0.1, 1]);
             this.setColor = (d) => {
                 if(valueById[d.id] !== undefined) {
-                    return interpolateBlues(colorScale(valueById[d.id]))
+                    return this.colorMap(colorScale(valueById[d.id]))
                 } else {
                     return this.defaultColor
                 }
