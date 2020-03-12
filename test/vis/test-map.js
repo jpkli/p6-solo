@@ -23,11 +23,34 @@ export default function() {
             scale: 150,
             projection: 'Mercator',
             colorMap: 'interpolateReds',
-            padding: {left: 50, right: 50, top: 50, bottom: 50},
+            hover: {
+                stroke: 'green',
+                'stroke-width': 3,
+                fill: '#eee',
+                
+            },
+            click: d => {console.log(d)},
+            showTip: d => d.indicator,
+            padding: {left: 0, right: 0, top: 0, bottom: 0},
         }
     
         let testMap = new geoMap(data, view).render();
         // testMap.addLayer({type: 'point', data: airports, feature: 'airports'});
+        testMap.addCircle({
+            data: [
+                {x: -122.490402, y: 37.786453, value: 5},
+                {x: -102.389809, y: 37.72728, value: 15},
+            ],
+            vmap: {
+                x: 'x', y: 'y', size: 'value',
+                hover: true,
+                showTip: d => d.value,
+                click: d => {console.log(d)}
+            },
+            style: {
+                color: 'yellow'
+            }
+        })
     })
 
 }

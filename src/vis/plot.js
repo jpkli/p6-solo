@@ -36,7 +36,6 @@ export default class Plot {
             this.width -= this.padding.left + this.padding.right;
             this.svg.main = this.svg.append('g')
                 .attr("transform", `translate(${this.padding.left}, ${this.padding.top})`);
-    
         } else {
             this.svg.main = select(view.svg);
         }
