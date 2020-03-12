@@ -93,7 +93,7 @@ export default function(data, spec, headers){
         if(keys.length === 0 && !spec.$data) return result;
         keys.forEach(function(key){
             var attr = key,
-                opt = outOpt || out[key];
+                opt = out[key] || outOpt;
 
             if(opt === "$count" || opt === "$data") {
                 attr = key;
