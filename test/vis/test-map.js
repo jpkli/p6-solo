@@ -24,7 +24,6 @@ export default function() {
             projection: 'Mercator',
             colorMap: 'interpolateReds',
             hover: {
-                stroke: 'green',
                 'stroke-width': 3,
                 fill: '#eee',
                 
@@ -36,7 +35,7 @@ export default function() {
     
         let testMap = new geoMap(data, view).render();
         // testMap.addLayer({type: 'point', data: airports, feature: 'airports'});
-        testMap.addCircle({
+        testMap.addCircles({
             data: [
                 {x: -122.490402, y: 37.786453, value: 5},
                 {x: -102.389809, y: 37.72728, value: 15},

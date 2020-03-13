@@ -7,8 +7,7 @@ import {scalePow} from 'd3-scale';
 import world from '../../assets/world-110m.json';
 import countries from '../../assets/countries.json';
 import {zoom} from 'd3-zoom';
-// import { transition } from 'd3-transition';
-
+import { transition } from 'd3-transition';
 
 export default class Map extends Plot {
   constructor(data, view) {
@@ -20,7 +19,7 @@ export default class Map extends Plot {
     this.gis = data.gis || world;
     
     this.borders = view.borders || true;
-    this.translate = view.translate || [this.width / 2, this.height / 1.75];
+    this.translate = view.translate || [this.width / 2, this.height / 1.6];
     this.scale = view.scale || ((view.projection == 'Albers') ? 1 : (this.width - 1) / 2 / Math.PI);
     this.exponent = view.exponent || 1/3;
     this.defaultColor = view.defaultColor || '#eee';
@@ -42,16 +41,14 @@ export default class Map extends Plot {
     let svgMain = this.svg
 
     this.zoom = zoom()
-      .scaleExtent([1, 8])
+      .scaleExtent([1, 12])
       .on('zoom', function () {
-        svgMain.selectAll('.geo-paths')
+        svgMain.selectAll('path')
           .attr('transform', event.transform);
         
         svgMain.selectAll('circle')
           .attr('transform', event.transform);
       });
-
-    console.log(this.projection([-122.490402, 37.786453]))
 
     this.svg.call(this.zoom)
 
@@ -90,19 +87,7 @@ export default class Map extends Plot {
   }
 
   render() { 
-    let self = this
-    if(this.borders) {
-      this.svg.main.append('path')
-        .attr('class', 'geo-borders')
-        .datum(topojson.mesh(this.gis, this.gis.objects[this.feature], function(a, b) { return a !== b; }))
-        .attr('d', this.path)
-        .style('fill', 'none')
-        .style('stroke', 'white')
-        .style('stroke-linejoin', 'round')
-        .style('stroke-linecap', 'round')
-        .style('vector-effect', 'non-scaling-stroke');
-    }
-    
+    let self = this    
     let geoPaths = this.svg.main.selectAll('.geo-paths')
       .data(topojson.feature(this.gis, this.gis.objects[this.feature]).features)
       .enter()
@@ -111,9 +96,21 @@ export default class Map extends Plot {
         .attr('d', this.path)
         .style('fill', this.setColor);
     
+      if(this.borders) {
+        this.svg.main.append('path')
+          .attr('class', 'geo-borders')
+          .datum(topojson.mesh(this.gis, this.gis.objects[this.feature], function(a, b) { return a !== b; }))
+          .attr('d', this.path)
+          .style('fill', 'none')
+          .style('stroke', 'white')
+          .style('stroke-linejoin', 'round')
+          .style('stroke-linecap', 'round')
+          .style('vector-effect', 'non-scaling-stroke');
+      }
       if (this.showTip) {
         geoPaths.on('mouseenter', function () {
-            self.tooltip.style('opacity', .9);
+            self.tooltip.transition()    
+            .duration(300).style('opacity', .9);
             if (typeof self.view.hover === 'object') {
                 let item = select(this);
                 Object.keys(self.view.hover).forEach(prop => {
@@ -130,12 +127,15 @@ export default class Map extends Plot {
               this.tooltip.style('left', (event.x) + 'px')
                 .style('top', (event.y + 20) + 'px');    
             } else {
-              this.tooltip.style('opacity', 0);
+              this.tooltip.transition()    
+              .duration(500) .style('opacity', 0);
             }
           })        
           .on('mouseout', function () {
             self.tooltip.style('opacity', 0);
-            select(this).style('stroke', 'white').style('stroke-width', 1).style('fill', self.setColor);
+            select(this).style('fill', self.setColor)
+                // .style('stroke', 'white')
+                // .style('stroke-width', 1);
           });
       }
       if (typeof this.view.click === 'function') {
@@ -144,8 +144,6 @@ export default class Map extends Plot {
           return this.view.click(region || {});
         })
       }
-
-
     return this;
   }
 
@@ -158,7 +156,7 @@ export default class Map extends Plot {
     }
   }
 
-  addCircle ({data, vmap = {}, style = {}}) {
+  addCircles ({data, vmap = {}, style = {}}) {
     let self = this
     let maxRadius = Math.min(this.width, this.height) * 0.03;
     let radiusValues = data.map(d => d[vmap.size])
@@ -175,7 +173,7 @@ export default class Map extends Plot {
           .attr("r", d => style.size || radiusScale(d[vmap.size]))
           .attr("fill", () => style.color || 'red')
           .attr("fill-opacity", () => style.opacity || 1)
-          .attr("stroke", () => style.stroke || 'black')
+          .attr("stroke", () => style.stroke || 'none')
   
     if (vmap.hover) {
       circles.on('mouseenter', function () {
@@ -197,6 +195,7 @@ export default class Map extends Plot {
     if (typeof vmap.click === 'function') {
       circles.on('click', d => {return vmap.click(d)})
     }
+
   }
 
   addMarker ({
