@@ -17,7 +17,7 @@ export default function() {
         };
     
         let view = {
-            container: 'body',
+            container: '#examples',
             width: 1000,
             height: 800,
             scale: 150,
@@ -25,8 +25,7 @@ export default function() {
             colorMap: 'interpolateReds',
             hover: {
                 'stroke-width': 3,
-                fill: '#eee',
-                
+                fill: '#eee', 
             },
             click: d => {console.log(d)},
             showTip: d => d.indicator,

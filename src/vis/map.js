@@ -31,23 +31,28 @@ export default class Map extends Plot {
     this.path = d3Geo.geoPath()
       .projection(this.projection);
 
-    if (this.showTip) {
-      this.tooltip = select(this.container).append('div') 
-        .attr('class', 'p3-tooltip')
-        .style('position', 'absolute')
-        .style('pointer-events', 'none')
-        .style('opacity', 0);
-    }
-    let svgMain = this.svg
+    this.tooltip = select(this.container).append('div') 
+      .attr('class', 'p3-tooltip')
+      .style('position', 'absolute')
+      .style('pointer-events', 'none')
+      .style('opacity', 0);
 
+    this.svg.on('mousedown', () => {
+        this.tooltip.style('opacity', 0);
+    })
+
+    this.zoomLevel = 1
     this.zoom = zoom()
       .scaleExtent([1, 12])
-      .on('zoom', function () {
-        svgMain.selectAll('path')
+      .on('zoom', () =>  {
+        this.zoomLevel = event.transform.k
+        this.svg.selectAll('path')
           .attr('transform', event.transform);
         
-        svgMain.selectAll('circle')
-          .attr('transform', event.transform);
+        this.svg.selectAll('circle')
+          .attr('r', d => d._size / event.transform.k)
+          .attr('transform', event.transform)
+          .style("stroke-width", 1 / event.transform.k);
       });
 
     this.svg.call(this.zoom)
@@ -109,8 +114,7 @@ export default class Map extends Plot {
       }
       if (this.showTip) {
         geoPaths.on('mouseenter', function () {
-            self.tooltip.transition()    
-            .duration(300).style('opacity', .9);
+            self.tooltip.transition().duration(300).style('opacity', .9);
             if (typeof self.view.hover === 'object') {
                 let item = select(this);
                 Object.keys(self.view.hover).forEach(prop => {
@@ -124,18 +128,15 @@ export default class Map extends Plot {
               if (typeof this.showTip === 'function') {
                 this.tooltip.html(this.showTip(region))  
               }
-              this.tooltip.style('left', (event.x) + 'px')
-                .style('top', (event.y + 20) + 'px');    
+              this.tooltip.style('left', (event.offsetX) + 'px')
+                .style('top', (event.offsetY) + 'px');    
             } else {
-              this.tooltip.transition()    
-              .duration(500) .style('opacity', 0);
+              this.tooltip.transition().duration(500).style('opacity', 0);
             }
-          })        
+          })
           .on('mouseout', function () {
             self.tooltip.style('opacity', 0);
             select(this).style('fill', self.setColor)
-                // .style('stroke', 'white')
-                // .style('stroke-width', 1);
           });
       }
       if (typeof this.view.click === 'function') {
@@ -158,16 +159,22 @@ export default class Map extends Plot {
 
   addCircles ({data, vmap = {}, style = {}}) {
     let self = this
-    let maxRadius = Math.min(this.width, this.height) * 0.03;
+    let maxRadius = Math.min(this.width, this.height) * 0.025;
     let radiusValues = data.map(d => d[vmap.size])
     let radiusDomain = [
       Math.min(...radiusValues),
       Math.max(...radiusValues),
     ]
+
     let radiusScale = scalePow().exponent(this.exponent).domain(radiusDomain).range([2, maxRadius]);
+ 
+    data.forEach(d => {
+        d._size = style.size || radiusScale(d[vmap.size])
+    })
     let circles = this.svg.main.selectAll("circle")
 		.data(data).enter()
-		.append("circle")
+        .append("circle")
+          .attr('class', 'circles')
           .attr("cx", d => this.projection([d[vmap.x], d[vmap.y]])[0])
           .attr("cy", d => this.projection([d[vmap.x], d[vmap.y]])[1])
           .attr("r", d => style.size || radiusScale(d[vmap.size]))
@@ -178,24 +185,27 @@ export default class Map extends Plot {
     if (vmap.hover) {
       circles.on('mouseenter', function () {
           self.tooltip.style('opacity', .9)
-          select(this).style('stroke', vmap.hover.stroke || 'teal').style('stroke-width', 3)
+          console.log(self.zoomLevel)
+          select(this)
+            .style('stroke', vmap.hover.stroke || 'teal')
+            .style('stroke-width', 8 / self.zoomLevel)
+            .raise();
         })
        .on('mousemove', d => {
         if (typeof vmap.showTip === 'function') {
           this.tooltip.html(vmap.showTip(d))  
         }
-        this.tooltip.style('left', (event.x) + 'px')
-          .style('top', (event.y + 20) + 'px');
+        this.tooltip.style('left', (event.offsetX) + 'px')
+          .style('top', (event.offsetY + 40) + 'px');
         })      
         .on('mouseout', function () {
           self.tooltip.style('opacity', 0);
-          select(this).style('stroke', style.stroke || 'black').style('stroke-width', 1);
+          select(this).style('stroke', style.stroke || 'black').style('stroke-width', 1 / self.zoomLevel);
         });
     }
     if (typeof vmap.click === 'function') {
       circles.on('click', d => {return vmap.click(d)})
     }
-
   }
 
   addMarker ({
