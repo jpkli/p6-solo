@@ -19,7 +19,7 @@ export default class Map extends Plot {
     this.gis = data.gis || world;
     
     this.borders = view.borders || true;
-    this.translate = view.translate || [this.width / 2, this.height / 1.6];
+    this.translate = view.translate || [this.width / 2, this.height / 1.8];
     this.scale = view.scale || ((view.projection == 'Albers') ? 1 : (this.width - 1) / 2 / Math.PI);
     this.exponent = view.exponent || 1/3;
     this.defaultColor = view.defaultColor || '#eee';
@@ -118,7 +118,7 @@ export default class Map extends Plot {
             if (typeof self.view.hover === 'object') {
                 let item = select(this);
                 Object.keys(self.view.hover).forEach(prop => {
-                    item.style(prop, self.view.hover[prop]);
+                  item.style(prop, self.view.hover[prop]);
                 });
             }
           })
@@ -128,7 +128,8 @@ export default class Map extends Plot {
               if (typeof this.showTip === 'function') {
                 this.tooltip.html(this.showTip(region))  
               }
-              this.tooltip.style('left', (event.offsetX) + 'px')
+              this.tooltip
+                .style('left', (event.offsetX) + 'px')
                 .style('top', (event.offsetY) + 'px');    
             } else {
               this.tooltip.transition().duration(500).style('opacity', 0);
@@ -159,14 +160,15 @@ export default class Map extends Plot {
 
   addCircles ({data, vmap = {}, style = {}}) {
     let self = this
-    let maxRadius = Math.min(this.width, this.height) * 0.025;
+    let maxRadius = style.maxRadius || Math.min(this.width, this.height) * 0.05;
+    let minRadius = style.minRadius || 5;
     let radiusValues = data.map(d => d[vmap.size])
     let radiusDomain = [
       Math.min(...radiusValues),
       Math.max(...radiusValues),
     ]
 
-    let radiusScale = scalePow().exponent(this.exponent).domain(radiusDomain).range([2, maxRadius]);
+    let radiusScale = scalePow().exponent(this.exponent).domain(radiusDomain).range([minRadius, maxRadius]);
  
     data.forEach(d => {
         d._size = style.size || radiusScale(d[vmap.size])
@@ -185,10 +187,10 @@ export default class Map extends Plot {
     if (vmap.hover) {
       circles.on('mouseenter', function () {
           self.tooltip.style('opacity', .9)
-          console.log(self.zoomLevel)
+
           select(this)
             .style('stroke', vmap.hover.stroke || 'teal')
-            .style('stroke-width', 8 / self.zoomLevel)
+            .style('stroke-width', 3 / self.zoomLevel)
             .raise();
         })
        .on('mousemove', d => {
@@ -196,7 +198,7 @@ export default class Map extends Plot {
           this.tooltip.html(vmap.showTip(d))  
         }
         this.tooltip.style('left', (event.offsetX) + 'px')
-          .style('top', (event.offsetY + 40) + 'px');
+          .style('top', (event.offsetY) + 'px');
         })      
         .on('mouseout', function () {
           self.tooltip.style('opacity', 0);
