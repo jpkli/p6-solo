@@ -6,7 +6,6 @@ import {schemeCategory10} from 'd3-scale-chromatic';
 export default class Spline extends Plot {
     constructor(data, view) {
         super(data, view);
-        this.render();
     }
 
     render() {
@@ -14,10 +13,9 @@ export default class Spline extends Plot {
         super.axes();
         let path = line()
             .curve(curveBasis)
-            .x( d => this.scales.x(d[vmap.x]) )
-            .y( d => this.scales.y(d[vmap.y]) );
+                .x( d => this.scales.x(d[vmap.x]) )
+                .y( d => this.scales.y(d[vmap.y]) );
     
-
         let datum = this.data.json;
         let color = () => vmap.color;
        
@@ -28,7 +26,7 @@ export default class Spline extends Plot {
                 if(result.hasOwnProperty(d[series])) {
                     result[d[series]].push(d)
                 } else {
-                    result[d[series]] = [];
+                    result[d[series]] = [d];
                 }
             })
             datum = result;
@@ -39,20 +37,20 @@ export default class Spline extends Plot {
 
         if(Array.isArray(datum)) {
             this.svg.main.append("path")
-            .datum(datum)
-            .attr("d", path)
-            .style("fill", 'none')
-            .style("stroke", vmap.color)
-            .style("stroke-width", vmap.size)
+                .datum(datum)
+                .attr("d", path)
+                .style("fill", 'none')
+                .style("stroke", vmap.color)
+                .style("stroke-width", vmap.size)
         } else if(typeof(datum) == 'object') {
             let series = Object.keys(datum);
             series .forEach((sample, di) => {
                 this.svg.main.append("path")
-                .datum(datum[sample])
-                .attr("d", path)
-                .style("fill", 'none')
-                .style("stroke", color(sample))
-                .style("stroke-width", vmap.size)
+                    .datum(datum[sample])
+                    .attr("d", path)
+                    .style("fill", 'none')
+                    .style("stroke", color(sample))
+                    .style("stroke-width", vmap.size)
             
                 if (this.data.fields.indexOf(vmap.color) !== -1) {
                     let legendWidth = Math.min(15, this.padding.right/2);
@@ -71,7 +69,7 @@ export default class Spline extends Plot {
     
                     if(di == 0){
                         this.svg.main.append('text')
-                            .attr('x', this.width + 10 + legendWidth/2)
+                            .attr('x', this.width + legendWidth/2)
                             .attr('y', 6)
                             .text(vmap.color)
                     }
