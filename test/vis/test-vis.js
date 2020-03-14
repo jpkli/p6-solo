@@ -63,7 +63,7 @@ if (url.searchParams.get('map') !== null) {
       {step: new Date(Date.now() + s * 23), value: 29, type: 'bbbbbbb'},
     ],
     schema: {step: 'time', value: 'number', type: 'string'},
-    vmap: {x: 'step', y: 'value', color: 'type'}
+    vmap: {x: 'step', y: 'value', color: 'type'}, 
   }, view).render();
 } else if (url.searchParams.get('bar') !== null) {
   let barChart = new BarChart(data, view);

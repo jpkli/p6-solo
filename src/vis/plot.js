@@ -139,6 +139,7 @@ export default class Plot {
 
             if(this.view.gridlines && this.view.gridlines.y) {
                 this.yGridlines = this.yAxis.append('g')
+                    .attr('class', 'p3-vis-gridLines')
                     .style('opacity', 0.15)
                     .call(axisLeft(this.scales.y).ticks(this.height/30).tickSize(-this.width))
                     .selectAll('text').remove();

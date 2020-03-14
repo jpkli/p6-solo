@@ -17,7 +17,9 @@ export default class Spline extends Plot {
                 .y( d => this.scales.y(d[vmap.y]) );
     
         let datum = this.data.json;
-        let color = () => vmap.color;
+        let color = vmap.color;
+ 
+
        
         let series =  vmap.by || vmap.color;
         if(this.data.fields.indexOf(series) !== -1) {
@@ -30,7 +32,10 @@ export default class Spline extends Plot {
                 }
             })
             datum = result;
-            if(this.data.fields.indexOf(vmap.color) !== -1) {
+            if (typeof this.view.colorMap === 'function') {
+                color = this.view.colorMap
+            }
+            else if (this.data.fields.indexOf(vmap.color) !== -1) {
                 color = scaleOrdinal(schemeCategory10);
             }
         }
@@ -44,7 +49,8 @@ export default class Spline extends Plot {
                 .style("stroke-width", vmap.size)
         } else if(typeof(datum) == 'object') {
             let series = Object.keys(datum);
-            series .forEach((sample, di) => {
+            series.forEach((sample, di) => {
+                console.log(color(sample))
                 this.svg.main.append("path")
                     .datum(datum[sample])
                     .attr("d", path)
@@ -63,12 +69,14 @@ export default class Spline extends Plot {
                         .style('fill', color(sample))
                     
                     this.svg.main.append('text')
+                        .attr('class', 'p3-vis-legend')
                         .attr('x', this.width + 15 + legendWidth)
-                        .attr('y', legendPosY + 6)
+                        .attr('y', legendPosY + 8)
                         .text(sample)
     
                     if(di == 0){
                         this.svg.main.append('text')
+                            .attr('class', 'p3-vis-legend')
                             .attr('x', this.width + legendWidth/2)
                             .attr('y', 6)
                             .text(vmap.color)
