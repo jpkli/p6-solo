@@ -106,6 +106,7 @@ export default class Plot {
                     scales[channel] = scaleOrdinal().domain(domain).range(range);
                 } else if (this.data.schema && this.data.schema[vmap[channel]] === 'time') {
                     let timeDomain = domain.map(d => new Date(d));
+                    this.domains[vmap[channel]] = timeDomain
                     scales[channel] = scaleTime().domain(timeDomain).range(range);
 
                 } else {

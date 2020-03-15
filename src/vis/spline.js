@@ -2,7 +2,7 @@ import Plot from './plot';
 import {line, curveBasis} from 'd3-shape';
 import {scaleOrdinal} from 'd3-scale';
 import {schemeCategory10} from 'd3-scale-chromatic';
-
+import {select, event} from 'd3-selection';
 export default class Spline extends Plot {
     constructor(data, view) {
         super(data, view);
@@ -19,8 +19,6 @@ export default class Spline extends Plot {
         let datum = this.data.json;
         let color = vmap.color;
  
-
-       
         let series =  vmap.by || vmap.color;
         if(this.data.fields.indexOf(series) !== -1) {
             let result = {}
@@ -50,7 +48,6 @@ export default class Spline extends Plot {
         } else if(typeof(datum) == 'object') {
             let series = Object.keys(datum);
             series.forEach((sample, di) => {
-                console.log(color(sample))
                 this.svg.main.append("path")
                     .datum(datum[sample])
                     .attr("d", path)
@@ -61,21 +58,22 @@ export default class Spline extends Plot {
                 if (this.data.fields.indexOf(vmap.color) !== -1) {
                     let legendWidth = Math.min(15, this.padding.right/2);
                     let legendPosY = (di + 1) * Math.min(30, this.width / series.length);
-                    this.svg.main.append('rect')
+                    let legend = this.svg.main.append('g')
+                    legend.append('rect')
                         .attr('x', this.width + 10)
                         .attr('y', legendPosY)
                         .attr('width', legendWidth)
                         .attr('height', 6)
                         .style('fill', color(sample))
                     
-                    this.svg.main.append('text')
+                    legend.append('text')
                         .attr('class', 'p3-vis-legend')
                         .attr('x', this.width + 15 + legendWidth)
                         .attr('y', legendPosY + 8)
                         .text(sample)
     
                     if(di == 0){
-                        this.svg.main.append('text')
+                        legend.append('text')
                             .attr('class', 'p3-vis-legend')
                             .attr('x', this.width + legendWidth/2)
                             .attr('y', 6)
