@@ -25,16 +25,16 @@ export default function() {
             colorMap: 'interpolateReds',
             hover: {
                 'stroke-width': 3,
-                fill: '#eee', 
+                fill: 'green', 
             },
-            click: d => {console.log(d)},
+            click: {fill: 'blue'},
             showTip: d => d.indicator,
             padding: {left: 0, right: 0, top: 0, bottom: 0},
         }
     
         let testMap = new geoMap(data, view).render();
         // testMap.addLayer({type: 'point', data: airports, feature: 'airports'});
-        testMap.addCircles({
+        let circles = testMap.addCircles({
             data: [
                 {x: -122.490402, y: 37.786453, value: 5},
                 {x: -102.389809, y: 37.72728, value: 15},
@@ -43,12 +43,19 @@ export default function() {
                 x: 'x', y: 'y', size: 'value',
                 hover: true,
                 showTip: d => d.value,
-                click: d => {console.log(d)}
+                
             },
+            
             style: {
                 color: 'yellow'
             }
         })
+        testMap.setCenter([-122.4194, 37.7749]);
+        circles
+          .attr('cx', d => testMap.projection([d.x, d.y])[0])
+          .attr('cy', d => testMap.projection([d.x, d.y])[1])
+        // testMap.selectRegionByName('United States of America', {fill: 'blue'})
+        // testMap.unselectRegion('United States of America', {fill: 'blue'})
     })
 
 }

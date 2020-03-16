@@ -8,7 +8,6 @@ import world from '../../assets/world-110m.json';
 import countries from '../../assets/countries.json';
 import {zoom} from 'd3-zoom';
 import { transition } from 'd3-transition';
-
 export default class Map extends Plot {
   constructor(data, view) {
     super(data, view);
@@ -17,10 +16,10 @@ export default class Map extends Plot {
     this.circle = data.vmap.points;
     this.scale = data.vmap.scale;
     this.gis = data.gis || world;
-    
+    this.selectedRegion = null;
     this.borders = view.borders || true;
     this.translate = view.translate || [this.width / 2, this.height / 1.8];
-    this.scale = view.scale || ((view.projection == 'Albers') ? 1 : (this.width - 1) / 2 / Math.PI);
+    this.scale = view.scale || ((view.projection == 'Albers') ? 1 : (this.width) / 2 / Math.PI);
     this.exponent = view.exponent || 1/3;
     this.defaultColor = view.defaultColor || '#eee';
     this.showTip = view.showTip;
@@ -91,6 +90,11 @@ export default class Map extends Plot {
     }
   }
 
+  setCenter (center) {
+    this.projection.center(center)
+    this.svg.selectAll('path').attr('d', this.path);
+  }
+
   render() { 
     let self = this    
     let geoPaths = this.svg.main.selectAll('.geo-paths')
@@ -99,6 +103,10 @@ export default class Map extends Plot {
       .append('path')
         .attr('class', 'geo-paths')
         .attr('d', this.path)
+        .attr('country-name', d => {
+            let country = countries.find(c => d.id === c.id);
+            return (country) ? country.name : null;
+        })
         .style('fill', this.setColor);
     
       if(this.borders) {
@@ -107,7 +115,8 @@ export default class Map extends Plot {
           .datum(topojson.mesh(this.gis, this.gis.objects[this.feature], function(a, b) { return a !== b; }))
           .attr('d', this.path)
           .style('fill', 'none')
-          .style('stroke', 'white')
+          .style('stroke', this.view.borderColor || 'white')
+          .style('stroke-width', 3)
           .style('stroke-linejoin', 'round')
           .style('stroke-linecap', 'round')
           .style('vector-effect', 'non-scaling-stroke');
@@ -115,11 +124,16 @@ export default class Map extends Plot {
       if (this.showTip) {
         geoPaths.on('mouseenter', function () {
             self.tooltip.transition().duration(300).style('opacity', .9);
+            let item = select(this);
+            if (self.selectedRegion 
+              && self.selectedRegion.attr('country-name') === item.attr('country-name')) {
+                return
+            }
+
             if (typeof self.view.hover === 'object') {
-                let item = select(this);
-                Object.keys(self.view.hover).forEach(prop => {
-                  item.style(prop, self.view.hover[prop]);
-                });
+              Object.keys(self.view.hover).forEach(prop => {
+                item.style(prop, self.view.hover[prop]);
+              });
             }
           })
           .on('mousemove', geoPath => {
@@ -137,15 +151,33 @@ export default class Map extends Plot {
           })
           .on('mouseout', function () {
             self.tooltip.style('opacity', 0);
-            select(this).style('fill', self.setColor)
+            let item = select(this);
+            if (self.selectedRegion 
+                && self.selectedRegion.attr('country-name') === item.attr('country-name')) {
+                  return
+              }
+            item
+              .style('fill', self.setColor)
+              .style('stroke', 'none')
+              .style('stroke-width', 0)
           });
       }
-      if (typeof this.view.click === 'function') {
-        geoPaths.on('click', geoPath => {
-          let region = this.data.json.find(d => d.pathId === geoPath.id);
-          return this.view.click(region || {});
+      if (this.view.click) {
+        geoPaths.on('click', function (geoPath) {
+          if (self.selectedRegion !== null) {
+            self.selectedRegion.style('fill', self.setColor)
+          }
+          self.selectedRegion = select(this);
+          Object.keys(self.view.click).forEach(prop => {
+            self.selectedRegion.style(prop, self.view.click[prop]);
+          });
+          if (typeof self.view.click.callback === 'function') {
+            let regionData = self.data.json.find(d => d.pathId === geoPath.id);
+            this.view.click.callback(regionData || {});
+          }
         })
       }
+      this.geoRegions = this.geoPaths
     return this;
   }
 
@@ -208,6 +240,21 @@ export default class Map extends Plot {
     if (typeof vmap.click === 'function') {
       circles.on('click', d => {return vmap.click(d)})
     }
+    return circles;
+  }
+
+  selectRegionByName (name, styles = {}) {
+    let region = document.querySelector('.geo-paths[country-name="' + name + '"]');
+    Object.keys(styles).forEach(prop => {
+      region.style[prop] = styles[prop];
+    });
+    this.selectedRegion = select(region);
+    return region;
+  }
+
+  unselectRegion() {
+    this.selectedRegion.style('fill', this.setColor)
+    this.selectedRegion = null;
   }
 
   addMarker ({
