@@ -253,8 +253,10 @@ export default class Map extends Plot {
   }
 
   unselectRegion() {
-    this.selectedRegion.style('fill', this.setColor)
-    this.selectedRegion = null;
+    if (this.selectedRegion) {
+      this.selectedRegion.style('fill', this.setColor)
+      this.selectedRegion = null;
+    }
   }
 
   addMarker ({
