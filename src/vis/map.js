@@ -173,7 +173,7 @@ export default class Map extends Plot {
           });
           if (typeof self.view.click.callback === 'function') {
             let regionData = self.data.json.find(d => d.pathId === geoPath.id);
-            this.view.click.callback(regionData || {});
+            self.view.click.callback(regionData || {});
           }
         })
       }
