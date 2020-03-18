@@ -20,17 +20,19 @@ for (let example of examples) {
 
 let data = {
   json: [
-      {time: 1, value: 130},
-      {time: 2, value: 391},
-      {time: 3, value: 230},
-      {time: 4, value: 630},
-      {time: 5, value: 500},
+      {time: 1, value: 130, value1: 34},
+      {time: 2, value: 391, value1: 56},
+      {time: 3, value: 230, value1: 89},
+      {time: 4, value: 630, value1: 90},
+      {time: 5, value: 500, value1: 87},
   ],
   vmap: {
       x: 'time',
       y: 'value',
       size: 10,
-      color: 'steelblue'
+      color: 'steelblue',
+      stack: ['value', 'value1'],
+      opacity: 0.5
   }
 }
 
@@ -41,7 +43,7 @@ let view = {
   padding: {left: 50, right: 100, top: 10, bottom: 60},
   axes: true,
   xAxis: {
-    format: timeFormat('%m-%d')
+    // format: timeFormat('%m-%d')
   }
 }
 

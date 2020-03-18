@@ -206,7 +206,7 @@ export default class Map extends Plot {
         d._size = style.size || radiusScale(d[vmap.size])
     })
     let circles = this.svg.main.selectAll("circle")
-		.data(data).enter()
+    .data(data).enter()
         .append("circle")
           .attr('class', 'circles')
           .attr("cx", d => this.projection([d[vmap.x], d[vmap.y]])[0])

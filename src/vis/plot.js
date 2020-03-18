@@ -124,26 +124,27 @@ export default class Plot {
 
     axes() {
         if(!this.view.hideAxes) {
-            let xAxis = axisBottom(this.scales.x).tickSizeOuter(0);
+            this.xAxis = axisBottom(this.scales.x).tickSizeOuter(0);
             if (this.view.xAxis) {
                 if (typeof this.view.xAxis.format === 'function') {
-                    xAxis.tickFormat(this.view.xAxis.format);
+                    this.xAxis.tickFormat(this.view.xAxis.format);
                 }
                 if (this.view.xAxis.ticks) {
-                    xAxis.ticks(this.view.xAxis.ticks);
+                    this.xAxis.ticks(this.view.xAxis.ticks);
                 }
             }
-            this.xAxis = this.svg.main.append('g')
+            this.xAxisSvg = this.svg.main.append('g')
                 .attr('class', 'p3-axis p3-axis-x')
                 .attr('transform', `translate(0, ${this.height})`)
-                .call(xAxis);
+                .call(this.xAxis);
             
-            this.yAxis = this.svg.main.append('g')
+            this.yAxis = axisLeft(this.scales.y).ticks(this.height/30)
+            this.yAxisSvg = this.svg.main.append('g')
                 .attr('class', 'p3-axis p3-axis-y')
-                .call(axisLeft(this.scales.y).ticks(this.height/30));
+                .call(this.yAxis);
 
             if(this.view.gridlines && this.view.gridlines.y) {
-                this.yGridlines = this.yAxis.append('g')
+                this.yGridlines = this.yAxisSvg.append('g')
                     .attr('class', 'p3-vis-gridLines')
                     .style('opacity', 0.15)
                     .call(axisLeft(this.scales.y).ticks(this.height/30).tickSize(-this.width))
