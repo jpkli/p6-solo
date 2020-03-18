@@ -1,6 +1,6 @@
 {
   "name": "p3.js",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Portable processing pipelines for data transformation and visualization based on single-thread JavaScript.",
   "main": "index.js",
   "directories": {

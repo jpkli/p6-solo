@@ -13,9 +13,7 @@ export default class AreaChart extends Plot {
     render() {
         let vmap = this.data.vmap;
         
-
         if (Array.isArray(vmap.stack)) {
-            console.log(this.data.json)
             const series = stack().keys(vmap.stack)(this.data.json);
             let color;
             if (typeof this.view.colorMap === 'function') {
