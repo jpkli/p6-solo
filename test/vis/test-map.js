@@ -50,7 +50,6 @@ export default function() {
                 color: 'yellow'
             }
         })
-        testMap.setCenter([-122.4194, 37.7749]);
         circles
           .attr('cx', d => testMap.projection([d.x, d.y])[0])
           .attr('cy', d => testMap.projection([d.x, d.y])[1])

@@ -125,8 +125,13 @@ export default class Plot {
     axes() {
         if(!this.view.hideAxes) {
             let xAxis = axisBottom(this.scales.x).tickSizeOuter(0);
-            if (this.view.xAxis && typeof this.view.xAxis.format === 'function') {
-                xAxis.tickFormat(this.view.xAxis.format);
+            if (this.view.xAxis) {
+                if (typeof this.view.xAxis.format === 'function') {
+                    xAxis.tickFormat(this.view.xAxis.format);
+                }
+                if (this.view.xAxis.ticks) {
+                    xAxis.ticks(this.view.xAxis.ticks);
+                }
             }
             this.xAxis = this.svg.main.append('g')
                 .attr('class', 'p3-axis p3-axis-x')
