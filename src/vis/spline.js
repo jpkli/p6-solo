@@ -57,7 +57,7 @@ export default class Spline extends Plot {
             
                 if (this.data.fields.indexOf(vmap.color) !== -1) {
                     let legendWidth = Math.min(15, this.padding.right/2);
-                    let legendPosY = (di + 1) * Math.min(30, this.width / series.length);
+                    let legendPosY = (di) * Math.min(25, this.width / series.length);
                     let legend = this.svg.main.append('g')
                         .attr('class', 'p3-vis-legend');
 
@@ -73,12 +73,12 @@ export default class Spline extends Plot {
                         .attr('y', legendPosY + 8)
                         .text(sample)
     
-                    if(di == 0){
-                        legend.append('text')
-                            .attr('x', this.width + legendWidth)
-                            .attr('y', 6)
-                            .text(vmap.color)
-                    }
+                    // if(di == 0){
+                    //     legend.append('text')
+                    //         .attr('x', this.width + legendWidth)
+                    //         .attr('y', 6)
+                    //         .text(vmap.color)
+                    // }
                 }
             })
         }
