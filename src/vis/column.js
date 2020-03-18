@@ -8,25 +8,23 @@ export default class BarChart extends Plot {
 
     render() {
         let vmap = this.data.vmap;
-        let domainY;
-        if (this.domains[vmap.y].length > 2) {
-            domainY = this.domains[vmap.y];
+        let domainX;
+        if (this.domains[vmap.x].length > 2) {
+            domainX = this.domains[vmap.x];
         } else {
-            domainY = new Array(this.domains[vmap.y][1] - this.domains[vmap.y][0] + 1).fill(1).map((d, i) => i + this.domains[vmap.y][0]);
+            domainX = new Array(this.domains[vmap.x][1] - this.domains[vmap.x][0] + 1).fill(1).map((d, i) => i + this.domains[vmap.x][0]);
         }
-        this.scales.y = scaleBand().domain(domainY).range([0, this.height]).padding(this.view.space || 0.05);
-        this.domains[vmap.x][0] = 0;
-        this.scales.x.domain(this.domains[vmap.x]);
+        this.scales.x = scaleBand().domain(domainX).range([0, this.width]).padding(0.05);
         super.axes();
         this.svg.main.selectAll(".plot-bars")
             .data(this.data.json)
           .enter().append("rect")
             .attr('class', 'plot-bars')
-            .attr('x', 0)
+            .attr('x', d => this.scales.x(d[vmap.x || vmap.width]))
             .attr('y', d => this.scales.y(d[vmap.y || vmap.height]))
             .style("fill", d => this.scales.color(d[vmap.color]))
-            .attr("height", this.scales.y.bandwidth())
-            .attr("width", d => this.scales.x(d[vmap.x || vmap.width]));
+            .attr("width", this.scales.x.bandwidth())
+            .attr("height", d => this.height - this.scales.y(d[vmap.y || vmap.height]));
     }
 
     update (newData, newColor) {
@@ -34,18 +32,18 @@ export default class BarChart extends Plot {
         let vmap = this.data.vmap;
 
         let bars = this.svg.main.selectAll(".plot-top-bars")
-            .data(newData, d => d[vmap.y]);
+            .data(newData, d => d[vmap.x]);
         
         bars.exit().remove();
 
         bars.enter().append("rect")
             .attr('class', 'plot-top-bars');
 
-        bars.attr('x', 0)
+        bars.attr('x', d => this.scales.x(d[vmap.x || vmap.width]))
             .attr('y', d => this.scales.y(d[vmap.y || vmap.height]))
             .style("fill", newColor)
-            .attr("height", this.scales.y.bandwidth())
-            .attr("width", d => this.scales.x(d[vmap.x || vmap.width]));
+            .attr("width", this.scales.x.bandwidth())
+            .attr("height", d => this.height - this.scales.y(d[vmap.y || vmap.height]));
 
     }
 }

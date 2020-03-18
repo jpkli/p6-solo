@@ -15,6 +15,7 @@ import AreaChart    from './src/vis/area';
 import Spline       from './src/vis/spline';
 import ScatterPlot  from './src/vis/circle';
 import BarChart     from './src/vis/bar';
+import ColumnChart  from './src/vis/column';
 import GeoMap       from './src/vis/map';
 
 export default {
