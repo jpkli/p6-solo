@@ -1,6 +1,7 @@
 import geoMap from '../../src/vis/map';
 import {csv} from 'd3-request';
 // import airports from '../assets/airports.json';
+import usaGIS from '../../assets/states-10m.json';
 
 export default function() {
     csv('/assets/governments.csv', function(rows){
@@ -20,8 +21,8 @@ export default function() {
             container: '#examples',
             width: 1000,
             height: 800,
-            scale: 150,
-            projection: 'Mercator',
+            scale: 1300,
+            projection: 'AlbersUsa',
             colorMap: 'interpolateReds',
             hover: {
                 'stroke-width': 3,
@@ -32,7 +33,7 @@ export default function() {
             padding: {left: 0, right: 0, top: 0, bottom: 0},
         }
     
-        let testMap = new geoMap(data, view).render();
+        let testMap = new geoMap({vmap: {}, gis: usaGIS, feature: 'states', }, view).render();
         // testMap.addLayer({type: 'point', data: airports, feature: 'airports'});
         let circles = testMap.addCircles({
             data: [
@@ -45,7 +46,6 @@ export default function() {
                 showTip: d => d.value,
                 
             },
-            
             style: {
                 color: 'yellow'
             }

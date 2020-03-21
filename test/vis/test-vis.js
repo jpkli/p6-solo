@@ -17,23 +17,28 @@ let examples = [
 for (let example of examples) {
   exampleList.innerHTML += '<a href="?' + example + '">' + example + '</a><br />';
 }
+let s = 24 * 3600 * 1000
 
 let data = {
   json: [
-      {time: 1, value: 130, value1: 34},
-      {time: 2, value: 391, value1: 56},
-      {time: 3, value: 230, value1: 89},
-      {time: 4, value: 630, value1: 90},
-      {time: 5, value: 500, value1: 87},
-  ],
+
+      {step: new Date(Date.now() + s), value: 500, value1: 87, value2: 74},
+      {step: new Date(Date.now() + s * 2),value: 230, value1: 89, value2: 65},
+      {step: new Date(Date.now() + s * 3), value: 500, value1: 87, value2: 74},
+      {step: new Date(Date.now() + s * 4), value: 630, value1: 90, value2: 32},
+      {step: new Date(Date.now() + s * 5), value: 230, value1: 89, value2: 65},
+      {step: new Date(Date.now() + s * 6), value: 30, value1: 189, value2: 615},
+      {step: new Date(Date.now() + s * 7), value: 230, value1: 89, value2: 65},
+    ],
   vmap: {
-      x: 'time',
+      x: 'step',
       y: 'value',
       size: 10,
       color: 'steelblue',
-      stack: ['value', 'value1'],
+      stack: ['value', 'value1', 'value2'],
       opacity: 0.5
-  }
+  },
+  schema: {step: 'time', value: 'number', value1: 'number', value2: 'number'}
 }
 
 let view = {

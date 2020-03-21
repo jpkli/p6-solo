@@ -38,5 +38,6 @@ export const vis = {
     BarChart,
     AreaChart,
     Spline,
-    GeoMap
+    GeoMap,
+    ColumnChart
 }

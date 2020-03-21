@@ -11,18 +11,18 @@ import { transition } from 'd3-transition';
 export default class Map extends Plot {
   constructor(data, view) {
     super(data, view);
-
     this.feature = data.feature || 'countries';
-    this.circle = data.vmap.points;
     this.scale = data.vmap.scale;
     this.gis = data.gis || world;
     this.selectedRegion = null;
     this.borders = view.borders || true;
+    this.entities = data.entities || countries;
     this.translate = view.translate || [this.width / 2, this.height / 1.8];
     this.scale = view.scale || ((view.projection == 'Albers') ? 1 : (this.width) / 2 / Math.PI);
     this.exponent = view.exponent || 1/3;
     this.defaultColor = view.defaultColor || '#eee';
     this.showTip = view.showTip;
+    this.setColor = view.setColor
     this.projection = d3Geo['geo'+ (view.projection || 'Albers')].call()
       .scale(this.scale)
       .translate(this.translate)
@@ -60,15 +60,15 @@ export default class Map extends Plot {
     if (typeof this.colorMap === 'string' && typeof d3Chromatic[this.colorMap] === 'function') {
       this.colorMap = d3Chromatic[this.colorMap]
     }
-    if(data.vmap.color) {
+    if(data.vmap.color && typeof this.setColor !== 'function') {
       let valueById = {};
       data.json.forEach( d => {
-        let country = countries.filter(c => c[data.join.type || 'code'] == d[data.join.field])[0] || -1;
-        if(country && country.id){
-          valueById[country.id] = typeof(d[data.vmap.color]) === 'string' && d[data.vmap.color].includes(',')
+        let entity = this.entities.find(c => c[data.join.type || 'code'] === d[data.join.field]);
+        if(entity && entity.id){
+          valueById[entity.id] = typeof(d[data.vmap.color]) === 'string' && d[data.vmap.color].includes(',')
             ? Number(d[data.vmap.color].replace(/,/g, ''))
             : Number(d[data.vmap.color])
-          d.pathId = country.id
+          d.pathId = entity.id
         }
       })
       let values = Object.keys(valueById).map(k => valueById[k]).filter(d=>!Number.isNaN(d));
@@ -103,9 +103,9 @@ export default class Map extends Plot {
       .append('path')
         .attr('class', 'geo-paths')
         .attr('d', this.path)
-        .attr('country-name', d => {
-            let country = countries.find(c => d.id === c.id);
-            return (country) ? country.name : null;
+        .attr('path-name', d => {
+          let entity = this.entities.find(c => d.id === c.id);
+          return (entity) ? entity.name : null;
         })
         .style('fill', this.setColor);
     
@@ -126,7 +126,7 @@ export default class Map extends Plot {
             self.tooltip.transition().duration(300).style('opacity', .9);
             let item = select(this);
             if (self.selectedRegion 
-              && self.selectedRegion.attr('country-name') === item.attr('country-name')) {
+              && self.selectedRegion.attr('path-name') === item.attr('path-name')) {
                 return
             }
 
@@ -137,6 +137,9 @@ export default class Map extends Plot {
             }
           })
           .on('mousemove', geoPath => {
+            if (!this.data.json) {
+              return
+            }
             let region = this.data.json.find(d => d.pathId === geoPath.id)
             if (region) {
               if (typeof this.showTip === 'function') {
@@ -153,7 +156,7 @@ export default class Map extends Plot {
             self.tooltip.style('opacity', 0);
             let item = select(this);
             if (self.selectedRegion 
-                && self.selectedRegion.attr('country-name') === item.attr('country-name')) {
+                && self.selectedRegion.attr('path-name') === item.attr('path-name')) {
                   return
               }
             item
@@ -244,7 +247,7 @@ export default class Map extends Plot {
   }
 
   selectRegionByName (name, styles = {}) {
-    let region = document.querySelector('.geo-paths[country-name="' + name + '"]');
+    let region = document.querySelector('.geo-paths[path-name="' + name + '"]');
     Object.keys(styles).forEach(prop => {
       region.style[prop] = styles[prop];
     });
