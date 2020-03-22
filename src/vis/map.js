@@ -105,7 +105,12 @@ export default class Map extends Plot {
         .attr('d', this.path)
         .attr('path-name', d => {
           let entity = this.entities.find(c => d.id === c.id);
-          return (entity) ? entity.name : null;
+          if (entity) {
+            return entity.name
+          }
+          if (d.properties && d.properties.name) {
+            return d.properties.name
+          }
         })
         .style('fill', this.setColor);
     

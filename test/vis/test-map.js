@@ -53,8 +53,8 @@ export default function() {
         circles
           .attr('cx', d => testMap.projection([d.x, d.y])[0])
           .attr('cy', d => testMap.projection([d.x, d.y])[1])
-        // testMap.selectRegionByName('United States of America', {fill: 'blue'})
-        // testMap.unselectRegion('United States of America', {fill: 'blue'})
+        // testMap.selectRegionByName('California', {fill: 'blue'})
+        // testMap.unselectRegion()
     })
 
 }
