@@ -1,5 +1,7 @@
 import Plot from './plot';
 import {scaleBand} from 'd3-scale';
+import {axisLeft} from 'd3-axis';
+
 export default class BarChart extends Plot {
     constructor(data, view) {
         super(data, view);
@@ -13,7 +15,8 @@ export default class BarChart extends Plot {
         if (this.domains[vmap.y].length > 2) {
             domainY = this.domains[vmap.y];
         } else {
-            domainY = new Array(this.domains[vmap.y][1] - this.domains[vmap.y][0] + 1).fill(1).map((d, i) => i + this.domains[vmap.y][0]);
+            domainY = new Array(this.domains[vmap.y][1] - this.domains[vmap.y][0] + 1)
+                .fill(1).map((d, i) => i + this.domains[vmap.y][0]);
         }
         return domainY;
     }
@@ -37,10 +40,18 @@ export default class BarChart extends Plot {
     }
 
     resize (w, h) {
+        this.yAxis = null
         super.resize(w, h)
         let vmap = this.data.vmap;
         let domainY = this.getDomainY();
         this.scales.y = scaleBand().domain(domainY).range([0, this.height]).padding(this.view.space || 0.05);
+
+        this.yAxis = axisLeft(this.scales.y).ticks(this.height / 30);
+        this.yAxisSvg
+            .transition().duration(500)
+            .attr('class', 'p3-axis p3-axis-y')
+            .call(this.yAxis);
+
         this.svg.main.selectAll('.p3-vis-bars')
             .transition().duration(500)
             .attr('y', d => this.scales.y(d[vmap.y || vmap.height]))

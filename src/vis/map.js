@@ -90,9 +90,9 @@ export default class Map extends Plot {
     }
   }
 
-  resize (w, h, scale = null) {
+  resize (w, h, scale = null, translate = null) {
     super.resize(w, h);
-    this.translate = [this.width / 2, this.height / 1.5];
+    this.translate = translate || [this.width / 2, this.height / 1.5];
     this.scale = scale || (this.width / 2 / Math.PI);
     this.projection.scale(this.scale).translate(this.translate);
 
