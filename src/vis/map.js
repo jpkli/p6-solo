@@ -17,7 +17,7 @@ export default class Map extends Plot {
     this.selectedRegion = null;
     this.borders = view.borders || true;
     this.entities = data.entities || countries;
-    this.translate = view.translate || [this.width / 2, this.height / 1.8];
+    this.translate = view.translate || [this.width / 2, this.height / 1.5];
     this.scale = view.scale || ((view.projection == 'Albers') ? 1 : (this.width) / 2 / Math.PI);
     this.exponent = view.exponent || 1/3;
     this.defaultColor = view.defaultColor || '#eee';
@@ -90,11 +90,12 @@ export default class Map extends Plot {
     }
   }
 
-  resize (w, h) {
-    super.resize(w, h)
-    this.scale = w
-    this.translate = [this.width / 2, this.height / 1.8];
-    this.projection.scale(w).translate(this.translate)
+  resize (w, h, scale = null) {
+    super.resize(w, h);
+    this.translate = [this.width / 2, this.height / 1.5];
+    this.scale = scale || (this.width / 2 / Math.PI);
+    this.projection.scale(this.scale).translate(this.translate);
+
     this.svg.selectAll('path')
       .transition().duration(500)
       .attr('d', this.path);

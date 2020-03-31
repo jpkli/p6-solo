@@ -1,4 +1,4 @@
-import testMap from './test-map';
+import testMap from './test-worldmap';
 import ScatterPlot from '../../src/vis/circle';
 import AreaChart from '../../src/vis/area';
 import BarChart from '../../src/vis/bar';
