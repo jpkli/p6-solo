@@ -57,7 +57,8 @@ let url = new URL(window.location.href);
 if (url.searchParams.get('map') !== null) {
   testMap();
 } else if (url.searchParams.get('area') !== null) {
-  new AreaChart(data, view).render();
+  let areaChart = new AreaChart(data, view).render();
+  areaChart.resize(1000, 300)
 } else if (url.searchParams.get('spline') !== null) {
   let s = 24 * 3600 * 1000
   let lineChart = new SplineLine({
@@ -75,7 +76,7 @@ if (url.searchParams.get('map') !== null) {
     vmap: {x: 'step', y: 'value', color: 'type'}, 
   }, view)
   lineChart.render()
-
+  lineChart.resize(1000, 800)
   lineChart.cursor = lineChart.svg.main.append('g')
     .append('line')
     .attr('x1', 0)
@@ -109,18 +110,30 @@ if (url.searchParams.get('map') !== null) {
   })
 
 } else if (url.searchParams.get('bar') !== null) {
-  let barChart = new BarChart(data, view);
-  barChart.update([{time: 1, value: 230},
-    {time: 2, value: 191},
-    {time: 3, value: 220},
-    {time: 4, value: 230},
-    {time: 5, value: 300}], 'red')
-    
-    barChart.update([{time: 1, value: 230},
+  let barChart = new BarChart({
+    json: [{time: 1, value: 230},
       {time: 2, value: 191},
       {time: 3, value: 220},
       {time: 4, value: 230},
-      {time: 5, value: 200}], 'red')
+      {time: 5, value: 300}],
+    vmap: {
+      x: 'value',
+      y: 'time',
+      color: 'teal'
+    }
+  }, view);
+  barChart.resize(500, 300)
+  // barChart.update([{time: 1, value: 230},
+  //   {time: 2, value: 191},
+  //   {time: 3, value: 220},
+  //   {time: 4, value: 230},
+  //   {time: 5, value: 300}], 'red')
+    
+    // barChart.update([{time: 1, value: 230},
+    //   {time: 2, value: 191},
+    //   {time: 3, value: 220},
+    //   {time: 4, value: 230},
+    //   {time: 5, value: 200}], 'red')
 // } else if (url.searchParams.get('ext') !== null) {
 //   testP4Ext();
 } else {

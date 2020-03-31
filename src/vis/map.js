@@ -90,6 +90,24 @@ export default class Map extends Plot {
     }
   }
 
+  resize (w, h) {
+    super.resize(w, h)
+    this.scale = w
+    this.translate = [this.width / 2, this.height / 1.8];
+    this.projection.scale(w).translate(this.translate)
+    this.svg.selectAll('path')
+      .transition().duration(500)
+      .attr('d', this.path);
+  
+    let {vmap} = this.circleProps
+
+    this.svg.main.selectAll('.circles')
+      .transition().duration(500)
+      .attr("cx", d => this.projection([d[vmap.x], d[vmap.y]])[0])
+      .attr("cy", d => this.projection([d[vmap.x], d[vmap.y]])[1])
+
+  }
+
   setCenter (center) {
     this.projection.center(center)
     this.svg.selectAll('path').attr('d', this.path);
@@ -121,7 +139,7 @@ export default class Map extends Plot {
           .attr('d', this.path)
           .style('fill', 'none')
           .style('stroke', this.view.borderColor || 'white')
-          .style('stroke-width', 3)
+          .style('stroke-width', 1)
           .style('stroke-linejoin', 'round')
           .style('stroke-linecap', 'round')
           .style('vector-effect', 'non-scaling-stroke');
@@ -207,12 +225,17 @@ export default class Map extends Plot {
       Math.min(...radiusValues),
       Math.max(...radiusValues),
     ]
-
-    let radiusScale = scalePow().exponent(this.exponent).domain(radiusDomain).range([minRadius, maxRadius]);
+   
+    let radiusScale = scalePow()
+      .exponent(this.exponent)
+      .domain(radiusDomain)
+      .range([minRadius, maxRadius]);
  
     data.forEach(d => {
         d._size = style.size || radiusScale(d[vmap.size])
     })
+
+    this.circleProps = {vmap, style}
     let circles = this.svg.main.selectAll("circle")
     .data(data).enter()
         .append("circle")

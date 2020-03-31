@@ -19,9 +19,9 @@ export default function() {
     
         let view = {
             container: '#examples',
-            width: 1000,
-            height: 800,
-            scale: 1300,
+            width: 800,
+            height: 600,
+            scale: 1000,
             projection: 'AlbersUsa',
             colorMap: 'interpolateReds',
             hover: {
@@ -53,6 +53,8 @@ export default function() {
         circles
           .attr('cx', d => testMap.projection([d.x, d.y])[0])
           .attr('cy', d => testMap.projection([d.x, d.y])[1])
+
+        testMap.resize(800, 500)
         // testMap.selectRegionByName('California', {fill: 'blue'})
         // testMap.unselectRegion()
     })
