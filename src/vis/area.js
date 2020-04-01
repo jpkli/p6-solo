@@ -23,10 +23,7 @@ export default class AreaChart extends Plot {
     }
 
     createLegend () {
-
         this.legend = this.svg.main.append('g').attr('class', 'p3-vis-legend');
-
-
         this.series.forEach((sample, di) => {
             let legendWidth = Math.min(15, this.padding.right/2);
             let legendPosY = (di) * Math.min(25, this.width / this.series.length);

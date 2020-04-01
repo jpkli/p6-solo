@@ -47,6 +47,9 @@ export default class Map extends Plot {
         this.zoomLevel = event.transform.k
         this.svg.selectAll('path')
           .attr('transform', event.transform);
+
+        this.svg.selectAll('.map-label')
+          .attr('transform', event.transform);
         
         this.svg.selectAll('circle')
           .attr('r', d => d._size / event.transform.k)
