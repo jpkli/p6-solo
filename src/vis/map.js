@@ -232,7 +232,7 @@ export default class Map extends Plot {
    
     let radiusScale = scalePow()
       .exponent(this.exponent)
-      .domain(radiusDomain)
+      .domain([radiusDomain])
       .range([minRadius, maxRadius]);
  
     data.forEach(d => {

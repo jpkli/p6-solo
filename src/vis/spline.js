@@ -1,6 +1,6 @@
 import Plot from './plot';
-import {line, curveBasis} from 'd3-shape';
-import {scaleOrdinal} from 'd3-scale';
+import * as d3Shape from 'd3-shape';
+import {scaleOrdinal,scalePow} from 'd3-scale';
 import {schemeCategory10} from 'd3-scale-chromatic';
 // import {select, event} from 'd3-selection';
 import { transition } from 'd3-transition';
@@ -8,6 +8,12 @@ import { transition } from 'd3-transition';
 export default class Spline extends Plot {
   constructor(data, view) {
     super(data, view);
+    let curve = view.interpolate || view.curve;
+    if (typeof d3Shape['curve' + curve] === 'function') {
+      this.curve = d3Shape[curve]
+    } else {
+      this.curve = d3Shape.curveCatmullRom
+    }
   }
 
   resize (w, h) {
@@ -24,11 +30,14 @@ export default class Spline extends Plot {
   render() {
     let vmap = this.data.vmap;
     super.axes();
-    this.path = line()
-      .curve(curveBasis)
-        .x( d => this.scales.x(d[vmap.x]) )
-        .y( d => this.scales.y(d[vmap.y]) );
-  
+    this.path = d3Shape.line()
+      .curve(this.curve)
+      .x( d => this.scales.x(d[vmap.x]) )
+
+    if (vmap.y && typeof vmap.y !== 'object') {
+      this.path.y( d => this.scales.y(d[vmap.y]) );
+    }
+
     let datum = this.data.json;
     let color = vmap.color;
  
@@ -53,12 +62,40 @@ export default class Spline extends Plot {
     this.color = color
     this.splines = []
     if(Array.isArray(datum)) {
-      this.splines[0] = this.svg.main.append('path')
-        .datum(datum)
-        .attr('d', this.path)
-        .style('fill', 'none')
-        .style('stroke', vmap.color)
-        .style('stroke-width', vmap.size)
+      if (vmap.y && typeof vmap.y !== 'object') {
+        this.splines[0] = this.svg.main.append('path')
+          .datum(datum)
+          .attr('d', this.path)
+          .style('fill', 'none')
+          .style('stroke', vmap.color)
+          .style('stroke-width', vmap.size)
+      } else {
+        let domains = vmap.y.columns.map(y => {
+          let values = this.data.json.map(d => d[y]);
+          return {
+            min: Math.min(...values),
+            max: Math.max(...values)
+          };
+        })
+        let min = Math.min(...domains.map(d => d.min));
+        let max = Math.max(...domains.map(d => d.max));
+        if (vmap.exponent) {
+          this.scales.y = scalePow().exponent(vmap.exponent).range([this.height, 0])
+        }
+        this.scales.y.domain([min, max]);
+        this.yAxis.scale(this.scales.y);
+        this.yAxisSvg.call(this.yAxis);
+        vmap.y.columns.forEach((y, yi) => {
+          this.path.y(d => this.scales.y(d[y]));
+          let color = (Array.isArray(vmap.y.colors)) ? vmap.y.colors[yi] : vmap.color;
+          this.splines[yi] = this.svg.main.append('path')
+            .datum(datum)
+            .attr('d', this.path)
+            .style('fill', 'none')
+            .style('stroke', color)
+            .style('stroke-width', vmap.size)
+        })
+      }
     } else if(typeof(datum) == 'object') {
       let series = Object.keys(datum);
       series.forEach((sample, di) => {

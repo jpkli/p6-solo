@@ -27,12 +27,12 @@ export default class Plot {
     this.height = view.height;
     this.width = view.width;
     this.svg = {};
+    this.scale = data.scale || {}
     this.domains = data.domains || {};
-    
     if (typeof this.data.schema === 'object') {
       this.data.fields = Object.keys(this.data.schema)
     }
-    
+
     if(!view.svg || view.svg === null) {
       if(view.container !== null) {
         this.svg = this.createSvg();
@@ -81,10 +81,14 @@ export default class Plot {
       fields = Object.keys(this.data.json[0]);
     }
     for (let channel of Object.keys(channels)) {
-      if(channel in vmap && fields.indexOf(vmap[channel]) !== -1) {
+      let attr = (Array.isArray(vmap[channel])) ? vmap[channel][0] : vmap[channel]
+      if (typeof attr === 'object' && attr.columns) {
+        attr = attr.columns[0]
+      }
+      if(channel in vmap && fields.indexOf(attr) !== -1) {
         let domain; 
-        if(!this.domains.hasOwnProperty(vmap[channel])) {
-          let value = this.data.json.map(d=>d[vmap[channel]]);
+        if(!this.domains.hasOwnProperty(attr)) {
+          let value = this.data.json.map(d=>d[attr]);
           let min = Math.min(...value) || 0;
           let max = Math.max(...value) || 0;
           
@@ -96,19 +100,24 @@ export default class Plot {
             }
             domain = [min, max];
           }
-          this.domains[vmap[channel]] = domain;
+          this.domains[attr] = domain;
         } else {
-          domain = this.domains[vmap[channel]] || [0, 1];
+          domain = this.domains[attr] || [0, 1];
         }
         let range = channels[channel];
-        
-        if( (this.data.schema && this.data.schema[vmap[channel] === 'string']) || domain.length > 2) {
-          scales[channel] = scaleOrdinal().domain(domain).range(range);
-        } else if (this.data.schema && this.data.schema[vmap[channel]] === 'time') {
-          let timeDomain = domain.map(d => new Date(d));
-          this.domains[vmap[channel]] = timeDomain
-          scales[channel] = scaleTime().domain(timeDomain).range(range);
 
+        if (this.data.schema && this.data.schema[attr] === 'time') {
+
+          domain = domain.map(d => new Date(d));
+          if (domain.length > 2) {
+            domain.sort((a, b) => a.getTime() - b.getTime())
+            domain = [domain[0], domain[domain.length -1]]
+          }
+          this.domains[attr] = domain
+          
+          scales[channel] = scaleTime().domain(domain).range(range);
+        } else if( (this.data.schema && this.data.schema[attr === 'string']) || domain.length > 2) {
+          scales[channel] = scaleOrdinal().domain(domain).range(range);
         } else {
           scales[channel] = scaleLinear().domain(domain).range(range);
           if(channel == 'color') {
@@ -116,7 +125,7 @@ export default class Plot {
           }
         }
       } else {
-        scales[channel] = () => vmap[channel];
+        scales[channel] = () => attr;
       }
     }
 
@@ -139,10 +148,12 @@ export default class Plot {
         .attr('transform', `translate(0, ${this.height})`)
         .call(this.xAxis);
       
-      this.yAxis = axisLeft(this.scales.y).ticks(this.height / 30);
-      this.yAxisSvg = this.svg.main.append('g')
-        .attr('class', 'p3-axis p3-axis-y')
-        .call(this.yAxis);
+      if (this.scales.y) {
+        this.yAxis = axisLeft(this.scales.y).ticks(this.height / 30);
+        this.yAxisSvg = this.svg.main.append('g')
+          .attr('class', 'p3-axis p3-axis-y')
+          .call(this.yAxis);
+      }
 
       if(this.view.gridlines && this.view.gridlines.y) {
         this.yGridlines = this.yAxisSvg.append('g')
@@ -170,7 +181,7 @@ export default class Plot {
       .attr('class', 'p3-axis-y-label')
       .attr('transform', 'rotate(-90)')
       .attr('y', -this.padding.left / 1.25 )
-      .attr('x', -this.height / 2 - this.padding.top )
+      .attr('x', -this.height / 2 - this.padding.bottom )
       .attr('dy', '1em')
       .text(this.data.vmap.y);
   }
