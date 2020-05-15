@@ -1,4 +1,4 @@
-import {scaleLinear, scaleOrdinal, scaleTime} from 'd3-scale';
+import {scaleLinear, scaleOrdinal, scaleTime, scalePow, scaleLog} from 'd3-scale';
 import {select} from 'd3-selection';
 import {interpolateHcl} from 'd3-interpolate';
 import {axisLeft, axisBottom} from 'd3-axis';
@@ -76,14 +76,28 @@ export default class Plot {
     let vmap = this.data.vmap;
 
     let fields = this.data.fields || null;
+    let exponent = 1.0;
+    let logScale = false;
     if(fields === null && this.data.json) {
       this.data.fields = Object.keys(this.data.json[0]);
       fields = Object.keys(this.data.json[0]);
     }
     for (let channel of Object.keys(channels)) {
       let attr = (Array.isArray(vmap[channel])) ? vmap[channel][0] : vmap[channel]
-      if (typeof attr === 'object' && attr.columns) {
-        attr = attr.columns[0]
+      if (typeof attr === 'object') {
+        if (Array.isArray(attr.columns)) {
+          attr = attr.columns[0];
+        }
+        if (Number.isFinite(attr.exponent)) {
+          exponent = attr.exponent
+        }
+        if (attr.logScale) {
+          logScale = true
+        }
+        if (attr.field) {
+          attr = attr.field
+        }
+        vmap[channel] = attr
       }
       if(channel in vmap && fields.indexOf(attr) !== -1) {
         let domain; 
@@ -107,15 +121,17 @@ export default class Plot {
         let range = channels[channel];
 
         if (this.data.schema && this.data.schema[attr] === 'time') {
-
           domain = domain.map(d => new Date(d));
           if (domain.length > 2) {
             domain.sort((a, b) => a.getTime() - b.getTime())
             domain = [domain[0], domain[domain.length -1]]
           }
           this.domains[attr] = domain
-          
           scales[channel] = scaleTime().domain(domain).range(range);
+        } else if(logScale) {
+          scales[channel] = scaleLog().domain(domain).range(range);
+        } else if(exponent !== 1.0) {
+          scales[channel] = scalePow().exponent(exponent).domain(domain).range(range);
         } else if( (this.data.schema && this.data.schema[attr === 'string']) || domain.length > 2) {
           scales[channel] = scaleOrdinal().domain(domain).range(range);
         } else {
@@ -181,7 +197,7 @@ export default class Plot {
       .attr('class', 'p3-axis-y-label')
       .attr('transform', 'rotate(-90)')
       .attr('y', -this.padding.left / 1.25 )
-      .attr('x', -this.height / 2 - this.padding.bottom )
+      .attr('x', -this.height / 2 )
       .attr('dy', '1em')
       .text(this.data.vmap.y);
   }
