@@ -2,6 +2,7 @@ import testMap from './test-worldmap';
 import ScatterPlot from '../../src/vis/circle';
 import AreaChart from '../../src/vis/area';
 import BarChart from '../../src/vis/bar';
+import ColumnChart from '../../src/vis/column';
 import SplineLine from '../../src/vis/spline';
 import {timeFormat} from 'd3-time-format';
 // import testP4Ext from './test-p4ext';
@@ -109,6 +110,20 @@ if (url.searchParams.get('map') !== null) {
       }
   })
 
+} else if (url.searchParams.get('column') !== null) {
+  new ColumnChart({
+    json: [{time: 1, value: 230},
+      {time: 2, value: 10000},
+      {time: 3, value: 100},
+      {time: 4, value: 10},
+      {time: 5, value: 1000}],
+    vmap: {
+      y: {field: 'value', logScale: true},
+      x: 'time',
+      color: 'teal'
+    }
+  }, view);
+
 } else if (url.searchParams.get('bar') !== null) {
   let barChart = new BarChart({
     json: [{time: 1, value: 230},
@@ -117,12 +132,12 @@ if (url.searchParams.get('map') !== null) {
       {time: 4, value: 230},
       {time: 5, value: 300}],
     vmap: {
-      x: 'value',
+      x: {field: 'value', exponent: 0.5},
       y: 'time',
       color: 'teal'
     }
   }, view);
-  barChart.resize(500, 300)
+  // barChart.resize(500, 300)
   // barChart.update([{time: 1, value: 230},
   //   {time: 2, value: 191},
   //   {time: 3, value: 220},
