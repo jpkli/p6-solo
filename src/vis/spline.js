@@ -79,21 +79,30 @@ export default class Spline extends Plot {
         })
         let min = Math.min(...domains.map(d => d.min));
         let max = Math.max(...domains.map(d => d.max));
-        if (vmap.exponent) {
-          this.scales.y = scalePow().exponent(vmap.exponent).range([this.height, 0])
+        if (vmap.y.exponent) {
+          this.scales.y = scalePow().exponent(vmap.y.exponent).range([this.height, 0])
         }
         this.scales.y.domain([min, max]);
         this.yAxis.scale(this.scales.y);
         this.yAxisSvg.call(this.yAxis);
+        let color = scaleOrdinal(schemeCategory10);
         vmap.y.columns.forEach((y, yi) => {
           this.path.y(d => this.scales.y(d[y]));
-          let color = (Array.isArray(vmap.y.colors)) ? vmap.y.colors[yi] : vmap.color;
           this.splines[yi] = this.svg.main.append('path')
             .datum(datum)
             .attr('d', this.path)
             .style('fill', 'none')
-            .style('stroke', color)
             .style('stroke-width', vmap.size)
+
+          if (Array.isArray(vmap.y.colors)) {
+            this.splines[yi].style('stroke', vmap.y.colors[yi])
+          } else {
+            if (vmap.y.color === 'columns') {
+              this.splines[yi].style('stroke', color(y))
+            } else {
+              this.splines[yi].style('stroke', vmap.color)
+            }
+          }
         })
       }
     } else if(typeof(datum) == 'object') {
@@ -120,7 +129,6 @@ export default class Spline extends Plot {
     this.series.forEach((sample, di) => {
       let legendWidth = Math.min(15, this.padding.right/2);
       let legendPosY = (di) * Math.min(25, this.width / this.series.length);
-
 
       this.legend.append('rect')
         .attr('x', this.width + 20)
