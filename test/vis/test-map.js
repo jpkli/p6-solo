@@ -24,6 +24,7 @@ export default function() {
             scale: 1000,
             projection: 'AlbersUsa',
             colorMap: 'interpolateReds',
+            zoom: true,
             hover: {
                 'stroke-width': 3,
                 fill: 'green', 

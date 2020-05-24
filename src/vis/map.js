@@ -23,6 +23,7 @@ export default class Map extends Plot {
     this.defaultColor = view.defaultColor || '#eee';
     this.showTip = view.showTip;
     this.setColor = view.setColor
+    this.enableZoom = view.zoom || false
     this.projection = d3Geo['geo'+ (view.projection || 'Albers')].call()
       .scale(this.scale)
       .translate(this.translate)
@@ -50,6 +51,9 @@ export default class Map extends Plot {
 
         this.svg.selectAll('.map-label')
           .attr('transform', event.transform);
+      
+        this.svg.selectAll('.map-marker')
+          .attr('transform', event.transform);
         
         this.svg.selectAll('circle')
           .attr('r', d => d._size / event.transform.k)
@@ -57,7 +61,9 @@ export default class Map extends Plot {
           .style("stroke-width", 1 / event.transform.k);
       });
 
-    this.svg.call(this.zoom)
+    if (this.enableZoom) {
+      this.svg.call(this.zoom)
+    }
 
     this.colorMap = view.colorMap || d3Chromatic.interpolateBlues
     if (typeof this.colorMap === 'string' && typeof d3Chromatic[this.colorMap] === 'function') {
@@ -232,13 +238,12 @@ export default class Map extends Plot {
    
     let radiusScale = scalePow()
       .exponent(this.exponent)
-      .domain([radiusDomain])
+      .domain(radiusDomain)
       .range([minRadius, maxRadius]);
  
     data.forEach(d => {
-        d._size = style.size || radiusScale(d[vmap.size])
+      d._size = style.size || radiusScale(d[vmap.size])
     })
-
     this.circleProps = {vmap, style}
     let circles = this.svg.main.selectAll("circle")
     .data(data).enter()
@@ -302,6 +307,7 @@ export default class Map extends Plot {
   }) {
     let location = this.projection(coordinate);
     this.svg.main.append('svg:foreignObject')
+      .attr('class', 'map-marker')
       .attr('x', location[0] - 3)
       .attr('y', location[1] - 15)
       .attr('width', 10)
