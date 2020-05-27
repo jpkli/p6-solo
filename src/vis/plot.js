@@ -32,7 +32,6 @@ export default class Plot {
     if (typeof this.data.schema === 'object') {
       this.data.fields = Object.keys(this.data.schema)
     }
-
     if(!view.svg || view.svg === null) {
       if(view.container !== null) {
         this.svg = this.createSvg();
@@ -99,7 +98,7 @@ export default class Plot {
         }
         vmap[channel] = attr
       }
-      if(channel in vmap && fields.indexOf(attr) !== -1) {
+      if(channel in vmap) {
         let domain; 
         if(!this.domains.hasOwnProperty(attr)) {
           let value = this.data.json.map(d=>d[attr]);
